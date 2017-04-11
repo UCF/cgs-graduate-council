@@ -1,0 +1,23 @@
+{
+  "name": "graduate-council",
+  "authors": [
+    "UCF Graduate Studies IT"
+  ],
+  "description": "graduate council site",
+  "main": "",
+  "license": "Copyright UCF",
+  "homepage": "http://www.graduatecouncil.ucf.edu/",
+  "componentsDirectory": "vendor/",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pikaday": "^1.4.0",
+    "moment": "^2.14.1"
+  }
+}
