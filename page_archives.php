@@ -66,10 +66,11 @@ get_header(); ?>
                 <ul id="documents_holder" class="list-no-bullet">
                     <?php
                     $documentTypes = array( 'Agenda', 'Approved Polices', 'Minutes', 'Forms and Files', 'Reports' );
+                    $documentTypes_values = array( 'agenda', 'approved polices', 'minutes', 'forms', 'reports' );
                     for( $i = 0, $l = count( $documentTypes ); $i < $l; $i++ ) { ?>
                         <li>
                             <label>
-                                <input type="checkbox" name="documentTypes" onclick="updateFilter( this, 'document-type', '<?php echo $documentTypes[ $i ]; ?>' )"
+                                <input type="checkbox" name="documentTypes" onclick="updateFilter( this, 'document-type', '<?php echo $documentTypes_values[ $i ]; ?>' )"
                                     <?php echo (( $input_council == $documentTypes[ $i ] )?'selected':''); ?> >
                                 <?php echo $documentTypes[ $i ]; ?>
                             </label>
@@ -198,12 +199,17 @@ get_header(); ?>
                 function filterBy( files, filterBy, filterForList ) {
                     var list = [];
 
-                    for( var i = files.length; i --> 0; )
-                        for( var j = filterForList.length; j --> 0; )
-                            if( files[ i ][ filterBy ].toLowerCase() == filterForList[ j ].toLowerCase() ) {
+                    for( var i = files.length; i --> 0; ) {
+                        for( var j = filterForList.length; j --> 0; ) {
+                            console.log( filterForList[ j ].toLowerCase() );
+                            if ( files[ i ][ filterBy ].toLowerCase() == filterForList[ j ].toLowerCase() ) {
                                 list.push( files[ i ] );
                                 break;
                             }
+                        }
+                    }
+
+                    console.log( filterBy, files, list );
 
                     return list;
                 }

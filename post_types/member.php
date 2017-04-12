@@ -67,8 +67,8 @@ namespace member_type{
                 array( 'gs_member' ),
                 array(
                     'labels' => array(
-                        'name' => __( 'Curriculum Subcommittee Serving Years' ),
-                        'single' => __( 'Curriculum Subcommittee Serving Year' ),
+                        'name' => __( 'Curriculum Serving Years' ),
+                        'single' => __( 'Curriculum Serving Year' ),
                     ),
                     'show_ui' => true,
                     'public' => false,
@@ -79,8 +79,8 @@ namespace member_type{
                 array( 'gs_member' ),
                 array(
                     'labels' => array(
-                        'name' => __( 'Policy and Procedures Subcommittee Serving Years' ),
-                        'single' => __( 'Policy and Procedures Subcommittee Serving Year' ),
+                        'name' => __( 'Policy and Procedures Serving Years' ),
+                        'single' => __( 'Policy and Procedures Serving Year' ),
                     ),
                     'show_ui' => true,
                     'public' => false,
@@ -91,8 +91,8 @@ namespace member_type{
                 array( 'gs_member' ),
                 array(
                     'labels' => array(
-                        'name' => __( 'Appeals and Awards Subcommittee Serving Years' ),
-                        'single' => __( 'Appeals and Awards Subcommittee Serving Year' ),
+                        'name' => __( 'Appeals and Awards Serving Years' ),
+                        'single' => __( 'Appeals and Awards Serving Year' ),
                     ),
                     'show_ui' => true,
                     'public' => false,
@@ -103,8 +103,8 @@ namespace member_type{
                 array( 'gs_member' ),
                 array(
                     'labels' => array(
-                        'name' => __( 'Program Review Subcommittee Serving Years' ),
-                        'single' => __( 'Program Review Subcommittee Serving Year' ),
+                        'name' => __( 'Program Review Committee Years' ),
+                        'single' => __( 'Program Review Committee Year' ),
                     ),
                     'show_ui' => true,
                     'public' => false,
@@ -193,7 +193,6 @@ namespace member_type{
                 $last_name = save_field( $id, 'last_name', 'last_name');
                 save_field( $id, 'email', 'email');
                 save_field( $id, 'college', 'college');
-                save_field( $id, 'department', 'department');
                 save_field( $id, 'faculty_senate_member', 'faculty_senate_member');
                 save_field( $id, 'faculty_senate_steering_committee_member', 'faculty_senate_steering_committee_member');
 
@@ -257,7 +256,9 @@ namespace member_type{
                     <tr>
                         <th><label for="college">College (or) Unit:</label></th>
                         <td>
+							<?php echo $data['college']; ?>
                             <select name="college" id="college">
+								<option></option>
                             <?php
                                 foreach( $setting_colleges as $college ) {
                                     if( $data['college'] == $college ) {
@@ -268,13 +269,6 @@ namespace member_type{
                                 }
                             ?>
                             </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label for="department">Department:</label></th>
-                        <td>
-                            <input type="text" name="department" id="department"
-                                   value="<?php echo $data['department'] ?>"/>
                         </td>
                     </tr>
                     <tr>
@@ -408,7 +402,7 @@ namespace member_type{
                         </td>
                     </tr>
                     <tr>
-                        <th class="table-label"><label for="curriculum_serving_years">Curriculum Subcommittee Serving Years:</label></th>
+                        <th class="table-label"><label for="curriculum_serving_years">Curriculum Committee Serving Years:</label></th>
                         <td>
                             <input id="curriculum_hidden" name="curriculum_serving_years" type="hidden" value="<?php echo implode( ',', $data['curriculum_serving_years'] ); ?>">
                             <table class="role-table" width="100%">
@@ -433,7 +427,7 @@ namespace member_type{
                         </td>
                     </tr>
                     <tr>
-                        <th class="table-label"><label for="policy_serving_years">Policy and Procedures Subcommittee Serving Years:</label></th>
+                        <th class="table-label"><label for="policy_serving_years">Policy and Procedures Committee Serving Years:</label></th>
                         <td>
                             <input id="policy_hidden" name="policy_serving_years" type="hidden" value="<?php echo implode( ',', $data['policy_serving_years'] ); ?>">
                             <table class="role-table" width="100%">
@@ -458,7 +452,7 @@ namespace member_type{
                         </td>
                     </tr>
                     <tr>
-                        <th class="table-label"><label for="appeals_select">Appeals and Awards Subcommittee Serving Years:</label></th>
+                        <th class="table-label"><label for="appeals_select">Appeals and Awards Committee Serving Years:</label></th>
                         <td>
                             <input id="appeals_hidden" name="appeals_serving_years" type="hidden" value="<?php echo implode( ',', $data['appeals_serving_years'] ); ?>">
                             <table class="role-table" width="100%">
@@ -483,7 +477,7 @@ namespace member_type{
                         </td>
                     </tr>
                     <tr>
-                        <th class="table-label"><label for="program_select">Program Review Subcommittee Serving Years:</label></th>
+                        <th class="table-label"><label for="program_select">Program Review Committee Serving Years:</label></th>
                         <td>
                             <input id="program_hidden" name="program_serving_years" type="hidden" value="<?php echo implode( ',', $data['program_serving_years'] ); ?>">
                             <table class="role-table" width="100%">
@@ -695,8 +689,8 @@ namespace member_type{
         function wpse70598_members_archive_metabox( $post ) {
             // Define the meta box form fields here
             $meta = get_post_meta( $post->ID );
-            $show_committees    = valueFromMeta( $meta, 'show_committees' );
-            $committee    = valueFromMeta( $meta, 'committee' );
+            $show_committees	= valueFromMeta( $meta, 'show_committees' );
+            $committee			= valueFromMeta( $meta, 'committee' );
             ?>
             <style>
                 h3.setting-heading {

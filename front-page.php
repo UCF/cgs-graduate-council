@@ -1,6 +1,7 @@
 <?php
-get_header(); ?>
-
+get_header();
+$setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
+?>
         <div id="primary" class="content-area">
             <main id="main" class="site-main" role="main">
 
@@ -25,8 +26,9 @@ get_header(); ?>
                             <option value="program_serving_years">Program Review and Awards</option>
                         </select>
                     </div>
-                    <h2>Current Graduate Council Members 2016</h2>
-                    <div class="memberRank">* denotes a faculty senate member</div>
+                    <h2>Current Graduate Council Members <?php echo $setting_current_year; ?></h2>
+					<div class="memberRank">‡ denotes a faculty senate steering committee member</div>
+					<div class="memberRank">* denotes a faculty senate member</div>
                     <?php
     
                     function JSONMember( $meta ) {
@@ -61,9 +63,7 @@ get_header(); ?>
     
                         return $r;
                     }
-    
-                    $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
-    
+        
                     $args = array(
                         'post_type' => 'gs_member',
                         'posts_per_page' => -1

@@ -53,6 +53,8 @@ get_header(); ?>
                                 'compare'   => '=',
                             ),
                         ),
+					'order' => 'ASC',
+					'orderby' => 'title',
                 );
 
                 if( $setting_current_year_only == 'on' )

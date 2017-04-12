@@ -65,6 +65,7 @@ get_header(); ?>
                         $details['first_name'][0] . '&nbsp;' . $details['last_name'][0].
                     '</a>';
 
+            if( !empty( $details['faculty_senate_steering_committee_member'][0] ) ) { $r .= '<sup style="font-weight: normal"> ‡</sup>'; }
             if( !empty( $details['faculty_senate_member'][0] ) ) { $r .= ' *'; }
 
             $r .=   '</div>';
@@ -214,7 +215,13 @@ get_header(); ?>
                     endwhile;
                 endif;
                 wp_reset_query();
-
+				
+				function stamp_comparator ( $a, $b ) {
+					return strcmp( $a["stamp"], $b["stamp"] ) * -1;
+				}
+				
+				usort( $meetings, "stamp_comparator" );
+				
                 if( !count( $meetings )) {
                     echo '<tr><td colspan="' . $colCount . '">No meetings have been scheduled as of yet.</td></tr>';
                 } else {
@@ -223,7 +230,7 @@ get_header(); ?>
                         ?>
                         <tr>
                             <?php
-                            echo '<td>'. $meeting['meeting'] . ' ';
+                            echo '<td>' . $meeting['meeting'] . ' ';
                             edit_post_link('Edit Meeting');
                             echo '</td>';
 
@@ -262,6 +269,7 @@ get_header(); ?>
                 <a style="font-size: 16px;" href="/<?php echo $setting_membersArchiveSlug; ?>">Previous Members</a>
             </div>
             <h2><?php echo $title; ?> Members</h2>
+			<div class="memberRank">‡ denotes a faculty senate steering committee member</div>
             <div class="memberRank">* denotes a faculty senate member</div>
             <div>
                 <?php

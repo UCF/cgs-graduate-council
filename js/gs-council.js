@@ -149,9 +149,12 @@ function renderMember( member, council, years, showCouncils ) {
     r += '<div class="memberBox">';
     r += '<div class="memberName">';
     r += '<a href="mailto:' + member.email + '">' + member.first_name + ' ' + member.last_name + '</a>';
-    if( member.faculty_senate_member != '' ) {
-        r += ' * ';
-    }
+	if( member['faculty_senate_steering_committee_member'] != '' ) {
+		r += ' <sup style="font-weight: normal"> &#8225;</sup>';
+	}
+	if( member.faculty_senate_member != '' ) {
+		r += ' * ';
+	}
     r += '</div>';
     if( councilTitle != 'Member' )
         r += '<div class="memberRank">' + councilTitle + '</div>';
