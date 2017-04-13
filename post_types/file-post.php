@@ -54,7 +54,9 @@ namespace file_post_type{
                 array(
                     'labels' => $labels,
                     'description' => 'Post a file and any children',
-                    'public' => true,
+					'public' => false,
+					'publicly_queryable' => false,
+					'show_ui' => true,
                     'has_archive' => true,
                     'rewrite' => array('slug' => 'uploads'),
                     'supports' => array('title', 'page-attributes'),
