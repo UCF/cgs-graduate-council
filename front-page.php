@@ -39,7 +39,6 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
                         $r .= '"last_name": "'                                   . $meta['last_name'][0] . '",';
                         $r .= '"email": "'                                       . $meta['email'][0] . '",';
                         $r .= '"college": "'                                     . $meta['college'][0] . '",';
-                        $r .= '"department": "'                                  . $meta['department'][0] . '",';
                         $r .= '"faculty_senate_member": "'                       . $meta['faculty_senate_member'][0] . '",';
                         $r .= '"faculty_senate_steering_committee_member": "'    . $meta['faculty_senate_steering_committee_member'][0] . '",';
     
@@ -63,7 +62,9 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
     
                         return $r;
                     }
-        
+    
+                    $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
+    
                     $args = array(
                         'post_type' => 'gs_member',
                         'posts_per_page' => -1

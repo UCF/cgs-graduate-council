@@ -24,7 +24,6 @@ get_header(); ?>
             $r .= '"last_name": "'                                   . $meta['last_name'][0] . '",';
             $r .= '"email": "'                                       . $meta['email'][0] . '",';
             $r .= '"college": "'                                     . $meta['college'][0] . '",';
-            $r .= '"department": "'                                  . $meta['department'][0] . '",';
             $r .= '"faculty_senate_member": "'                       . $meta['faculty_senate_member'][0] . '",';
             $r .= '"faculty_senate_steering_committee_member": "'    . $meta['faculty_senate_steering_committee_member'][0] . '",';
 
