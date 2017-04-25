@@ -50,7 +50,10 @@ jQuery(document).ready(function($){
         meta_image_frame.on('select', function(){
             var media_attachment = meta_image_frame.state().get('selection').first().toJSON(); // Grabs the attachment selection and creates a JSON representation of the model.
 
-            $( elem ).val( media_attachment.url ); // Sends the attachment URL to our custom image input field.
+            var parser = document.createElement('a');
+            parser.href = media_attachment.url;
+
+            $( elem ).val( parser.pathname ); // Sends the attachment URL to our custom image input field.
         });
 
         meta_image_frame.open(); // Opens the media library frame.
