@@ -138,6 +138,12 @@ get_header(); ?>
                     endif;
                     wp_reset_query();
 
+                    function stamp_comparator ( $a, $b ) {
+                        return strcmp( $a["stamp"], $b["stamp"] ) * -1;
+                    }
+ 
+                    usort( $meetings, "stamp_comparator" );
+
                     if( !count( $meetings )) {
                         echo '<tr><td colspan="' . $colCount . '">No meetings have been found for ' . $select_years . '.</td></tr>';
                     } else {
