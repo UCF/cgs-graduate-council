@@ -34,7 +34,7 @@ get_header(); ?>
 
         ?>
             <div class="col-xs-3">
-                <h3>Years</h3>
+                <h3>Year</h3>
                 <ul id="years_holder" class="list-no-bullet">
                     <?php
                     for( $i = 0, $l = count( $setting_years ); $i < $l; $i++ ) { ?>
@@ -62,11 +62,11 @@ get_header(); ?>
                         </li>
                     <?php } ?>
                 </ul>
-                <h3>Document Types</h3>
+                <h3>Document Type</h3>
                 <ul id="documents_holder" class="list-no-bullet">
                     <?php
-                    $documentTypes = array( 'Agenda', 'Approved Polices', 'Minutes', 'Forms and Files', 'Reports' );
-                    $documentTypes_values = array( 'agenda', 'approved polices', 'minutes', 'forms', 'reports' );
+                    $documentTypes = array( 'Agenda', 'Approved Policies', 'Minutes', 'Forms and Files', 'Reports' );
+                    $documentTypes_values = array( 'agenda', 'polices', 'minutes', 'forms', 'reports' );
                     for( $i = 0, $l = count( $documentTypes ); $i < $l; $i++ ) { ?>
                         <li>
                             <label>
@@ -84,7 +84,7 @@ get_header(); ?>
                         Sort By:
                         <select onchange="setSortBy( this )">
                             <option value="+title">File name</option>
-                            <option value="-year">Years</option>
+                            <option value="-year">Year</option>
                             <option value="+committee">Committee</option>
                             <option value="+document-type">Document Type</option>
                         </select>
@@ -95,8 +95,8 @@ get_header(); ?>
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Document Types</th>
-                            <th>Years</th>
+                            <th>Document Type</th>
+                            <th>Year</th>
                             <th>Committee</th>
                         </tr>
                     </thead>
@@ -233,6 +233,14 @@ get_header(); ?>
                         "program_serving_years": "Program Review"
                     };
 
+                    var displayFileType = {
+                        'agenda': 'Agenda',
+                        'minutes': 'Minutes',
+                        'polices': 'Approved Policies',
+                        'forms': 'Forms and Files',
+                        'reports': 'Reports'
+                    };
+
                     var direction = ( sortFilesBy.charAt(0) == '-')? -1:1;
 
                     files.sort( sortByGiven( sortFilesBy.substr(1), direction ) );
@@ -242,7 +250,7 @@ get_header(); ?>
 
                         r += "<tr>";
                         r += "<td><a href='" + file.file_url + "'>" + file.title + "</a></td>";
-                        r += "<td>" + file['document-type'].charAt(0).toUpperCase() + file['document-type'].substr(1) + "</td>";
+                        r += "<td>" + displayFileType[ file['document-type'] ] + "</td>";
                         r += "<td>" + file.year + "</td>";
                         r += "<td>" + programCodeToProgram[ file.committee ] + "</td>";
                         r += "</tr>";
