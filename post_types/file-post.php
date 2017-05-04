@@ -172,7 +172,7 @@ namespace file_post_type{
                                 <option value="minutes" <?php if( $data['document-type'] == 'minutes' ) echo "selected"; ?>>Minutes</option>
                                 <option value="reports" <?php if( $data['document-type'] == 'reports' ) echo "selected"; ?>>Reports</option>
                                 <option value="forms" <?php if( $data['document-type'] == 'forms' ) echo "selected"; ?>>Forms and Files</option>
-                                <option value="polices" <?php if( $data['document-type'] == 'polices' ) echo "selected"; ?>>Approved Polices</option>
+                                <option value="polices" <?php if( $data['document-type'] == 'polices' ) echo "selected"; ?>>Approved Policies</option>
                             </select>
                         </td>
                     </tr>

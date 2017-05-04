@@ -17,6 +17,15 @@ get_header(); ?>
         $setting_committee = '';
         $page_meta_settings = array();
 
+        $has_agenda = false;
+        $has_minutes = false;
+
+        $select_years = $setting_current_year;
+
+        $matches = array();
+        if( ISSET( $_GET['years'] ) && preg_match('/\d+-\d+/', $_GET['years'], $matches ) )
+            $select_years = $_GET['years'];
+
 
         function getFileUrl( $gs_file_id ) {
             $meta = get_post_meta( $gs_file_id );
@@ -60,82 +69,88 @@ get_header(); ?>
                 <?php
                     $years = explode( ',', $setting_years );
                     foreach( $years as $year ) {
-                        echo '<li><a href="?years=' . $year . '#meetings">' . $year . '</a></li>';
+                        if( $select_years == $year )
+                            echo '<li>' . $year . '</li>';
+                        else
+                            echo '<li><a href="?years=' . $year . '#meetings">' . $year . '</a></li>';
                     }
                 ?>
                 </ul>
             </div>
+            <?php
+
+            $colCount = 1;
+            if( !empty( $setting_hasSubmitDate ) )  $colCount++;
+            if( !empty( $setting_hasAgenda ) )      $colCount++;
+            if( !empty( $setting_hasMinutes ) )     $colCount++;
+
+            $setting_current_years = explode( '-', $select_years );
+
+            $setting_first_year = $setting_current_years[ 0 ];
+            $setting_last_year  = $setting_current_years[ 1 ];
+
+
+            $cutDate        = '7/1/2017';
+            $cutDateParts   = explode( '/', $cutDate );
+            $cutMonth       = $cutDateParts[ 0 ];
+            $cutDay         = $cutDateParts[ 1 ];
+
+            $firstCutDate = mktime( 0, 0, 0, $cutMonth, $cutDay, $setting_first_year );
+            $lastCutDate = mktime( 0, 0, 0, $cutMonth, $cutDay, $setting_last_year );
+
+            $meetings = array();
+            $query_meetings = new WP_Query( $args );
+            if($query_meetings->have_posts()):
+                while ($query_meetings->have_posts()):
+                    $query_meetings->the_post();
+
+                    $meta = get_post_meta( $post->ID );
+
+                    $date = explode( '/', $meta['date'][0] );
+                    $stamp = mktime( 0, 0, 0, $date[0], $date[1], $date[2] );
+
+                    if( $firstCutDate < $stamp && $stamp < $lastCutDate ) {
+
+                        $meeting = array(
+                            'id'            => $post->ID,
+                            'date'          => $date,
+                            'stamp'         => $stamp,
+                            'meeting'       => date('l', $stamp ) . ', ' . $meta['date'][0] . ' ' . str_replace('0','',$meta['hour'][0] ) .':'.$meta['minutes'][0].' '.$meta['meridiem'][0] . ' ' . $meta['location'][0],
+                            'location'      => valueFromMeta( $meta, 'location' ),
+                            'deadline'      => valueFromMeta( $meta, 'deadline' ),
+                            'agenda_id'     => valueFromMeta( $meta, 'agenda_id' ),
+                            'minutes_id'    => valueFromMeta( $meta, 'minutes_id' )
+                        );
+
+                        $meetings[] = $meeting;
+
+                        if( trim( $meeting['agenda_id'] ) != '' )
+                            $has_agenda = true;
+
+                        if( trim( $meeting['minutes_id'] ) != '' )
+                            $has_minutes = true;
+                    }
+                endwhile;
+            endif;
+            ?>
             <div class="col-xs-9">
                 <table class="meeting-table">
                     <thead>
                     <tr>
                         <?php
                         echo '<th>Meeting Date and Time</th>';
-                        if( !empty($setting_hasSubmitDate) )
+                        if( !empty($setting_hasSubmitDate) && $select_years == $setting_current_year )
                             echo '<th>Submit Date</th>';
-                        if( !empty($setting_hasAgenda))
+                        if( !empty($setting_hasAgenda) && $has_agenda )
                             echo '<th>Agenda</th>';
-                        if( !empty($setting_hasMinutes) )
+                        if( !empty($setting_hasMinutes) && $has_minutes )
                             echo '<th>Minutes</th>';
                         ?>
                     </tr>
                     </thead>
                     <tbody>
+
                     <?php
-
-                    $colCount = 1;
-                    if( !empty( $setting_hasSubmitDate ) )  $colCount++;
-                    if( !empty( $setting_hasAgenda ) )      $colCount++;
-                    if( !empty( $setting_hasMinutes ) )     $colCount++;
-
-                    $select_years = $setting_current_year;
-
-                    $matches = array();
-                    if( ISSET( $_GET['years'] ) && preg_match('/\d+-\d+/', $_GET['years'], $matches ) )
-                        $select_years = $_GET['years'];
-
-                    $setting_current_years = explode( '-', $select_years );
-
-                    $setting_first_year = $setting_current_years[ 0 ];
-                    $setting_last_year  = $setting_current_years[ 1 ];
-
-
-                    $cutDate        = '7/1/2017';
-                    $cutDateParts   = explode( '/', $cutDate );
-                    $cutMonth       = $cutDateParts[ 0 ];
-                    $cutDay         = $cutDateParts[ 1 ];
-
-                    $firstCutDate = mktime( 0, 0, 0, $cutMonth, $cutDay, $setting_first_year );
-                    $lastCutDate = mktime( 0, 0, 0, $cutMonth, $cutDay, $setting_last_year );
-
-                    $meetings = array();
-                    $query_meetings = new WP_Query( $args );
-                    if($query_meetings->have_posts()):
-                        while ($query_meetings->have_posts()):
-                            $query_meetings->the_post();
-
-                            $meta = get_post_meta( $post->ID );
-
-                            $date = explode( '/', $meta['date'][0] );
-                            $stamp = mktime( 0, 0, 0, $date[0], $date[1], $date[2] );
-
-                            if( $firstCutDate < $stamp && $stamp < $lastCutDate ) {
-
-                                $meeting = array(
-                                    'id'            => $post->ID,
-                                    'date'          => $date,
-                                    'stamp'         => $stamp,
-                                    'meeting'       => date('l', $stamp ) . ', ' . $meta['date'][0] . ' ' . str_replace('0','',$meta['hour'][0] ) .':'.$meta['minutes'][0].' '.$meta['meridiem'][0] . ' ' . $meta['location'][0],
-                                    'location'      => valueFromMeta( $meta, 'location' ),
-                                    'deadline'      => valueFromMeta( $meta, 'deadline' ),
-                                    'agenda_id'     => valueFromMeta( $meta, 'agenda_id' ),
-                                    'minutes_id'    => valueFromMeta( $meta, 'minutes_id' )
-                                );
-
-                                $meetings[] = $meeting;
-                            }
-                        endwhile;
-                    endif;
                     wp_reset_query();
 
                     function stamp_comparator ( $a, $b ) {
@@ -156,7 +171,7 @@ get_header(); ?>
                                 edit_post_link('Edit Meeting', '', '', $meeting['id'] );
                                 echo '</td>';
 
-                                if( !empty($setting_hasSubmitDate) )
+                                if( !empty($setting_hasSubmitDate) && $select_years == $setting_current_year )
                                     echo '<td>' . $meeting['deadline'] . '</td>';
 
                                 if( !empty($setting_hasAgenda)) {

@@ -72,6 +72,7 @@ get_header(); ?>
         ?>
         <div class="content-tile">
             <h1 id="member"><?php echo $title; ?></h1>
+            <div class="memberRank">‡ denotes a faculty senate steering committee member</div>
             <div class="memberRank">* denotes a faculty senate member</div>
             <div>
 
@@ -116,7 +117,7 @@ get_header(); ?>
                 ?>
                 </script>
                 <div class="col-xs-3">
-                    <h4>Years</h4>
+                    <h4>Year</h4>
                     <div id="years">
 
                     </div>
