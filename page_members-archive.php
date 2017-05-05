@@ -123,7 +123,6 @@ get_header(); ?>
                     </div>
                 </div>
                 <div class="col-xs-9">
-                    <h4>Members</h4>
                     <div id="members">
 
                     </div>

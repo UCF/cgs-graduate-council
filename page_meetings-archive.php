@@ -115,7 +115,7 @@ get_header(); ?>
                             'id'            => $post->ID,
                             'date'          => $date,
                             'stamp'         => $stamp,
-                            'meeting'       => date('l', $stamp ) . ', ' . $meta['date'][0] . ' ' . str_replace('0','',$meta['hour'][0] ) .':'.$meta['minutes'][0].' '.$meta['meridiem'][0] . ' ' . $meta['location'][0],
+                            'meeting'       => $meta['date'][0] . ' ' . str_replace('0','',$meta['hour'][0] ) .':'.$meta['minutes'][0].' '.$meta['meridiem'][0] . ' - ' . $meta['location'][0],
                             'location'      => valueFromMeta( $meta, 'location' ),
                             'deadline'      => valueFromMeta( $meta, 'deadline' ),
                             'agenda_id'     => valueFromMeta( $meta, 'agenda_id' ),
@@ -139,10 +139,13 @@ get_header(); ?>
                     <tr>
                         <?php
                         echo '<th>Meeting Date and Time</th>';
+                        // Only display the “Submit Date” on the current year. There is no need to display this date on previous years.
                         if( !empty($setting_hasSubmitDate) && $select_years == $setting_current_year )
                             echo '<th>Submit Date</th>';
+                        // If a column heading has no data for a specific year, do not display the column.
                         if( !empty($setting_hasAgenda) && $has_agenda )
                             echo '<th>Agenda</th>';
+                        // If a column heading has no data for a specific year, do not display the column.
                         if( !empty($setting_hasMinutes) && $has_minutes )
                             echo '<th>Minutes</th>';
                         ?>
