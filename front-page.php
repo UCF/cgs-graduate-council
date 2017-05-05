@@ -158,7 +158,7 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
                                 groupName = "Policy Council Members";
                                 break;
                             case "program_serving_years":
-                                groupName = "Program Council Members";
+                                groupName = "Program Review and Awards Committee Members";
                                 break;
                         }
 

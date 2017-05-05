@@ -151,10 +151,10 @@ namespace meetings_type{
                         $council = "Policy and Procedures";
                         break;
                     case "appeals_serving_years":
-                        $council = "Appeals and Awards";
+                        $council = "Appeals";
                         break;
                     case "program_serving_years":
-                        $council = "Program Review";
+                        $council = "Program Review and Awards";
                         break;
                     case "":
                         $council = "";
