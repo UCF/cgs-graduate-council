@@ -36,10 +36,11 @@
                              */
                             do_action( 'twentysixteen_credits' );
                         ?>
-                        <div id="Copyrights" style="text-align: center; font-size: 11px; line-height: 13px">
-                            <strong>&copy; 2016 University of Central Florida</strong><br>
+                        <div id="Copyrights">
+                            <strong>&copy; 2017 University of Central Florida</strong><br>
                             Graduate Council 407-823-3567. Site maintained by College of Graduate Studies, <br>
-                            Millican Hall 230, PO Box 160112, Orlando, FL 32816-0112. <a href="mailto:grad_web@ucf.edu">Webmaster</a>
+                            Millican Hall 230, PO Box 160112, Orlando, FL 32816-0112.<br>
+                            <a href="mailto:grad_web@ucf.edu">Contact Us</a>
                         </div>
                         <!--<span class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></span>-->
                     </div><!-- .site-info -->
