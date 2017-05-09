@@ -123,7 +123,7 @@ get_header(); ?>
             $setting_membersArchiveSlug    = valueFromMeta( $page_meta_settings, 'membersSlug' );
             ?>
             <div class="content-tile">
-            <h1><?php the_title(); ?></h1>
+            <h1 class="entry-title"><?php the_title(); ?></h1>
             <p>
                 <?php the_content(); ?>
             </p>

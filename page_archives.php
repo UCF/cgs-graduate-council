@@ -10,6 +10,7 @@ get_header(); ?>
 <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
         <div class="content-tile">
+        <h1 class="entry-title"><?php the_title(); ?></h1>
         <?php
         $title = '';
         $page_meta_settings = array();
@@ -33,7 +34,8 @@ get_header(); ?>
         wp_reset_query();
 
         ?>
-            <div class="col-xs-3">
+            <div class="col-xs-3" style="padding-right:20px;">
+                <h2>Filters</h2>
                 <h3>Year</h3>
                 <ul id="years_holder" class="list-no-bullet">
                     <?php
@@ -90,7 +92,7 @@ get_header(); ?>
                         </select>
                     </label>
                 </div>
-                <h1><?php the_title(); ?></h1>
+                <h2>Results</h2>
                 <table class="meeting-table">
                     <thead>
                         <tr>

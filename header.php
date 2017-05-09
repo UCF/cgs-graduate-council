@@ -30,15 +30,11 @@
 
 		<header id="masthead" class="site-header" role="banner">
         
-        	<!---<div class="site-logo">
-            	<img src="http://wp.dev.gs.ucf.edu/wp-content/themes/graduate-council/images/gs-logo.svg" id="logo">
-            </div>--->
-        
 	        <div class="site-branding">
 				<?php twentysixteen_the_custom_logo(); ?>
 
                 <?php if ( is_front_page() && is_home() ) : ?>
-                    <h1 class="site-title"><div><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></div></h1>
+                    <div class="site-title"><div><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></div></div>
                 <?php else : ?>
                     <div class="site-title"><div><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></div></div>
                 <?php endif;

@@ -6,7 +6,7 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
             <main id="main" class="site-main" role="main">
 
             	<div class="content-tile">
-                    <h2>About the Graduate Council</h2>
+                    <h1 class="entry-title">About the Graduate Council</h1>
                     <p>
                         UCF graduate education depends on the participation of its faculty on university committees for guidance and decisions. The Graduate Council is a standing committee of the Faculty Senate and is comprised of four Graduate Committees: Appeals, Curriculum, Policy, and Program Review and Awards. A number of other working groups and committees assist with graduate education at UCF and provide valuable services.
                     </p>
