@@ -1524,6 +1524,8 @@ blockquote:after,
  */
 h2 {
     font-size: 2em;
+    border-bottom:1px solid #eee;
+    margin-bottom: 15px;
 }
 .site-inner {
     border: 1px solid #ddd;
@@ -2397,7 +2399,11 @@ body.search-no-results .page-header {
  */
 
 .site-footer {
-    background: #3e3e3e;
+    background: #000 !important;
+    text-align: center; 
+    font-size: 14px; 
+    line-height: 22px;
+    padding:20px 0;
 }
 
 .site-info {
@@ -3977,7 +3983,7 @@ body {
     font-family: 'Open Sans', sans-serif;
     font-size: 10pt;
     color: #000;
-    background: rgb( 247, 247, 247 );
+    background: #fff;
     font-size: 14px;
 }
 td, th {
@@ -4088,11 +4094,8 @@ ul.memberSub li a:hover{
 }
 
 .content-tile {
-    box-shadow: 0 0 5px rgba( 0, 0, 0, 0.2 );
-	//border:1px solid silver;
-	background:white;
-	margin-top:30px;
-	padding:30px;
+	margin-top:40px;
+	margin-bottom:40px;
 }
 
 .site-inner{background:none;}
@@ -4169,7 +4172,7 @@ footer .main-navigation a {
     padding-left: 0;
 }
 .meeting-table tr td {
-    border-top: 1px solid lightgrey;
+    border-top: 1px solid #eee;
 }
 .list-no-bullet {
     list-style: none;
