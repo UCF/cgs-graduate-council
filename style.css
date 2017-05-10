@@ -4178,3 +4178,11 @@ footer .main-navigation a {
     list-style: none;
     margin: 0;
 }
+
+.footer-links a:hover{
+	color:#eee;
+}
+
+#front-page-image{
+	float:right; margin:5px;
+}

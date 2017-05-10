@@ -26,16 +26,17 @@
                             ?>
                         </nav><!-- .main-navigation -->
                     <?php endif; ?>
-
                     <div class="footer-links">
-                        <?php
-                            /**
-                             * Fires before the twentysixteen footer text for footer customization.
-                             *
-                             * @since Twenty Sixteen 1.0
-                             */
-                            do_action( 'twentysixteen_credits' );
-                        ?>
+                        <b>External Resources and Affiliates</b>
+                        <div>
+                            <a href="http://facultysenate.ucf.edu/">Faculty Senate</a> | 
+                            <a href="http://bot.ucf.edu/">UCF Board of Trustees</a> | 
+                            <a href="http://provost.ucf.edu/">Office of the Provost President</a> | 
+                            <a href="http://www.flbog.edu/">Florida Board of Governors</a> | 
+                            <a href="http://cgsnet.org/">Council of Graduate Schools</a> | 
+                            <a href="http://www.graduatecatalog.ucf.edu/">Graduate Catalog</a>
+                        </div>
+                        <br>
                         <div id="Copyrights">
                             <strong>&copy; 2017 University of Central Florida</strong><br>
                             Graduate Council 407-823-2766. Site maintained by College of Graduate Studies, <br>
