@@ -4183,5 +4183,16 @@ footer .main-navigation a {
 }
 
 #front-page-image{
-	float:right; margin:5px 5px 10px 5px;
+	float:right; 
+	margin:5px 5px 10px 5px;
+}
+
+h3{
+	margin-top:20px;
+	margin-bottom:0!important;
+}
+
+h3 span{
+	background: #ffc904;
+	padding: 2px 10px;
 }

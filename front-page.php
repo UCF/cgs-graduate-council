@@ -116,13 +116,14 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
             <script>
                 var _current_year = "<?php echo $setting_current_year; ?>";
                 var $members = document.getElementById('members');
+                var showAllGroupName = "All Current Members";
 
                 window.onload = function init() {
                     normalizeMembers( members );
 
                     var filteredMembers = updateMembers( members, 'council_serving_years', _current_year );
 
-                    $members.innerHTML = renderMembersGroup( "", filteredMembers, 'council_serving_years', _current_year );
+                    $members.innerHTML = renderMembersGroup(showAllGroupName, filteredMembers, 'council_serving_years', _current_year );
                     fixMemberBoxes();
                 };
 
@@ -147,7 +148,7 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
 
                         switch( elem.value ) {
                             case "council_serving_years":
-                                groupName = "";
+                                groupName = showAllGroupName;
                                 break;
                             case "appeals_serving_years":
                                 groupName = "Appeals Council Members";

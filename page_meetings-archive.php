@@ -65,6 +65,7 @@ get_header(); ?>
             ?>
             <h2 id="meetings"><?php echo $title; ?></h2>
             <div class="col-xs-3">
+                <h3><span>Year</span></h3>
                 <ul class="list-no-bullet">
                 <?php
                     $years = explode( ',', $setting_years );

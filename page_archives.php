@@ -36,7 +36,7 @@ get_header(); ?>
         ?>
             <div class="col-xs-3" style="padding-right:20px;">
                 <h2>Filters</h2>
-                <h3>Year</h3>
+                <h3><span>Year</span></h3>
                 <ul id="years_holder" class="list-no-bullet">
                     <?php
                     for( $i = 0, $l = count( $setting_years ); $i < $l; $i++ ) { ?>
@@ -49,7 +49,7 @@ get_header(); ?>
                         </li>
                     <?php } ?>
                 </ul>
-                <h3>Committee</h3>
+                <h3><span>Committee</span></h3>
                 <ul id="committees_holder" class="list-no-bullet">
                     <?php
                     $committees = array( 'Appeals', 'Curriculum', 'Policy', 'Program Review' );
@@ -64,7 +64,7 @@ get_header(); ?>
                         </li>
                     <?php } ?>
                 </ul>
-                <h3>Document Type</h3>
+                <h3><span>Document Type</span></h3>
                 <ul id="documents_holder" class="list-no-bullet">
                     <?php
                     $documentTypes = array( 'Agenda', 'Approved Policies', 'Minutes', 'Forms and Files', 'Reports' );

@@ -117,7 +117,7 @@ get_header(); ?>
                 ?>
                 </script>
                 <div class="col-xs-3">
-                    <h4>Year</h4>
+                    <h3><span>Year</span></h3>
                     <div id="years">
 
                     </div>
