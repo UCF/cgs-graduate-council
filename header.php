@@ -21,6 +21,7 @@
 	<?php wp_head(); ?>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,700i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Arvo:400,700" rel="stylesheet">
+    <link rel='shortcut icon' href='/wp-content/themes/graduate-council/favicon.ico'/>
 </head>
 
 <body <?php body_class(); ?>>

@@ -42,7 +42,7 @@
                             Graduate Council 407-823-2766. Site maintained by College of Graduate Studies.<br>
                             Millican Hall 230, PO Box 160112, Orlando, FL 32816-0112.<br>
                             <strong>&copy; 2017 University of Central Florida</strong><br>
-                            <a href="mailto:grad_web@ucf.edu">Contact Us</a>
+                            <a href="mailto:grad_web@ucf.edu">Contact Webmaster</a>
                         </div>
                         <!--<span class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></span>-->
                     </div><!-- .site-info -->

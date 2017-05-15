@@ -209,9 +209,9 @@ function renderMembersGroup( groupName, members, council, years ) {
     var r = '<div class="membersGroup">';
 
     if( groupName ) {
-        r += '<div class="membershipGroupName">';
+        r += '<h3><span>';
         r += groupName;
-        r += '</div>';
+        r += '</span></h3>';
     }
 
     r += renderMembers( members, council, years );
