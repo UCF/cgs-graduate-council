@@ -110,7 +110,7 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
                         ?>
                         </script>
                         <div id="members"></div>
-                        <div style="clear:both;"/>
+                        <div style="clear:both;"></div>
                    </div><!-- .content-tile -->
             </main><!-- .site-main -->
             <script>
@@ -173,8 +173,8 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
                 }
             </script>
             <?php get_sidebar( 'content-bottom' ); ?>
-
-        </div><!-- .content-area -->
+        </div>
+    </div><!-- .content-area -->
 
 <?php get_sidebar(); ?>
 <?php get_footer(); ?>
