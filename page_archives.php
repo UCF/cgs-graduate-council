@@ -41,7 +41,7 @@ get_header(); ?>
                     <?php
                     for( $i = 0, $l = count( $setting_years ); $i < $l; $i++ ) { ?>
                         <li>
-                            <label>
+                            <label class="archive-filter" id="year-<?php echo $setting_years[ $i ]; ?>">
                                 <input type="checkbox" name="years" onclick="updateFilter( this, 'year', '<?php echo $setting_years[ $i ]; ?>' );"
                                     <?php echo (( $input_current_year == $setting_years[ $i ] )?'selected':''); ?> >
                                 <?php echo $setting_years[ $i ]; ?>
@@ -56,7 +56,7 @@ get_header(); ?>
                     $committee_values = array( 'appeals_serving_years', 'curriculum_serving_years', 'policy_serving_years', 'program_serving_years' );
                     for( $i = 0, $l = count( $committees ); $i < $l; $i++ ) { ?>
                         <li>
-                            <label>
+                            <label class="archive-filter" id="committee-<?php echo $committee_values[ $i ]; ?>">
                                 <input type="checkbox" name="committee" onclick="updateFilter( this, 'committee', '<?php echo $committee_values[ $i ]; ?>' );"
                                     <?php echo (( $input_council == $committees[ $i ] )?'selected':''); ?> >
                                 <?php echo $committees[ $i ]; ?>
@@ -71,7 +71,7 @@ get_header(); ?>
                     $documentTypes_values = array( 'agenda', 'polices', 'minutes', 'forms', 'reports' );
                     for( $i = 0, $l = count( $documentTypes ); $i < $l; $i++ ) { ?>
                         <li>
-                            <label>
+                            <label class="archive-filter" id="documentType-<?php echo $documentTypes_values[ $i ]; ?>">
                                 <input type="checkbox" name="documentTypes" onclick="updateFilter( this, 'document-type', '<?php echo $documentTypes_values[ $i ]; ?>' )"
                                     <?php echo (( $input_council == $documentTypes[ $i ] )?'selected':''); ?> >
                                 <?php echo $documentTypes[ $i ]; ?>
@@ -84,7 +84,7 @@ get_header(); ?>
                 <div style="float:right; margin-top: 10px;">
                     <label>
                         Sort By:
-                        <select onchange="setSortBy( this )">
+                        <select class="archive-sort" onchange="setSortBy( this )">
                             <option value="+title">File name</option>
                             <option value="-year">Year</option>
                             <option value="+committee">Committee</option>
