@@ -11,94 +11,6 @@ get_header(); ?>
     <main id="main" class="site-main" role="main">
         <?php
         $title = '';
-        function roleDetails( $role ) {
-            $parts = explode( ' ', $role );
-            $year = $parts[0];
-            $parts[0] = '';
-
-            return array(
-                'year' => $year,
-                'title' => trim( implode( ' ', $parts ) )
-            );
-        }
-        function title( $roles, $year ) {
-            $r = '';
-            $roles_split = explode( ',', $roles );
-            for( $i = 0; $i < count( $roles_split ); $i++ ) {
-                $role = $roles_split[ $i ];
-                $roleDetails = roleDetails( $role );
-                if( $roleDetails['year'] == $year && strpos( strtolower( $roleDetails['title']), 'member' ) === false ) {
-                    $r .= $roleDetails['title'];
-                }
-            }
-            return $r;
-        }
-        function titles( $meta, $key, $group, $year ){
-            $r = '';
-            if( !empty( $meta[ $key ] ) ) {
-                $membership = explode( ',', $meta[ $key ][0] );
-                for( $i = 0; $i < count( $membership ); $i++ ) {
-                    $roleDetails = roleDetails( $membership[$i] );
-                    if( $roleDetails['year'] == $year) {
-                        $r .= '<ul class="memberSub">';
-                        $r .= '<li>' . $group;
-                        if( strtolower( trim( $roleDetails['title'] ) ) != 'member' ) :
-                        $r .= '( '. $roleDetails['title'] .' )';
-                        endif;
-                        $r .= '</li>';
-                        $r .= '</ul>';
-                    }
-                }
-
-            }
-            return $r;
-        }
-        function renderMember( $details, $settings, $year ) {
-            $post = get_post();
-            $setting_committee = $settings['committee'][0];
-
-            $highest_rank = title( $details[ $setting_committee ][0], $year );
-
-            $r =    '<div class="memberBox">' .
-                    '<div class="memberName">' .
-                    '<a href="mailto:'. $details['email'][0] .'">'.
-                        $details['first_name'][0] . '&nbsp;' . $details['last_name'][0].
-                    '</a>';
-
-            if( !empty( $details['faculty_senate_steering_committee_member'][0] ) ) { $r .= '<sup style="font-weight: normal"> ‡</sup>'; }
-            if( !empty( $details['faculty_senate_member'][0] ) ) { $r .= ' *'; }
-
-            $r .=   '</div>';
-
-
-            $r .=   '<div class="memberRank">' . $highest_rank . '</div>';
-
-            $r .= '<div class="memberCollege">'.
-                $details['college'][0] .
-                '</div>';
-
-
-            if( !empty(  $settings['show_committees'][0] ) ) {
-                if( $setting_committee != 'curriculum_serving_years' )
-                    $r .= titles( $details, 'curriculum_serving_years', 'Curriculum', $year );
-                if( $setting_committee != 'appeals_serving_years' )
-                    $r .= titles( $details, 'appeals_serving_years', 'Appeals and Awards', $year );
-                if( $setting_committee != 'policy_serving_years' )
-                    $r .= titles( $details, 'policy_serving_years', 'Policy and Procedures', $year );
-                if( $setting_committee != 'program_serving_years' )
-                    $r .= titles( $details, 'program_serving_years', 'Program Review', $year );
-            }
-
-            if ( $url = get_edit_post_link( $post->ID ) ) {
-                $r .= '<a href="' . esc_url( $url ) . '">Edit Member</a>';
-            }
-            $r .= '</div>';
-
-            return array(
-                'title' => strtolower( $highest_rank ),
-                'card' => $r
-            );
-        }
         function getFileUrl( $gs_file_id ) {
             $meta = get_post_meta( $gs_file_id );
 
@@ -272,57 +184,35 @@ get_header(); ?>
 			<div class="memberRank">‡ denotes a faculty senate steering committee member</div>
             <div class="memberRank">* denotes a faculty senate member</div>
             <div>
-                <?php
-                $args = array(
-                    'post_type' => 'gs_member',
-                    'posts_per_page' => -1,
-                    'meta_query' =>
-                        array(
-                            array(
-                                'key'       => $setting_committee,
-                                'value'     => $setting_current_year,
-                                'compare'   => 'LIKE',
-                            )
-                        ),
-                );
-                ?>
-                <div>
-                <?php
-                $member_order = array(
-                    'chair',
-                    'vice-chair',
-                    'liaison from the college of graduate studies',
-                    'student',
-                    'ex officio',
-                    'member',
-                    '',
-                );
-
-                $members = array();
-                $query_members = new WP_Query( $args );
-                if($query_members->have_posts()):
-                    while ($query_members->have_posts()):
-                        $query_members->the_post();
-
-                        $meta = get_post_meta( $post->ID );
-                        array_push( $members, renderMember( $meta, $page_meta_settings, $setting_current_year ) );
-
-                    endwhile;
-                endif;
-                wp_reset_query();
-
-                for( $member_order_counter = 0; $member_order_counter < count( $member_order ); $member_order_counter++ ) {
-                    $order = $member_order[ $member_order_counter ];
-                    for( $i = 0; $i < count( $members ); $i++ ) {
-                        $member = $members[ $i ];
-
-                        if( $member['title'] === $order )
-                            echo $member['card'];
-                    }
-                }
-                ?>
-                </div>
+                <div id="members"></div>
                 <div style="clear: both;"></div>
+                <script>
+                    var _current_year = "<?php echo trim( esc_attr( get_option( 'current_year' ) ) ); ?>";
+                    var _committee = "<?php echo trim( $setting_committee ); ?>";
+
+                    var $members = document.getElementById('members');
+
+                    var members = [];
+                    window.onload = function init() {
+                        $.ajax( {
+                            url: wpApiSettings.root + 'graduate/v2/members/' + _committee, // wpApiSettings is defined in functions.php\twentysixteen_scripts()
+                            method: 'GET',
+                            beforeSend: function ( xhr ) {
+                                xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+                            }
+                        } ).done( function ( response ) {
+                            members = response;
+
+                            // Generates titles for each committee a member belongs to.
+                            normalizeMembers( members );
+
+                            var filteredMembers = updateMembers( members, _committee, _current_year ); // Filters and sorts by Committee, then Alpha
+
+                            $members.innerHTML = renderMembers( filteredMembers, _committee, _current_year, false );
+                            fixMemberBoxes();
+                        } );
+                    };
+                </script>
 
                 <div>
                     <?php edit_post_link('Edit Page');?>

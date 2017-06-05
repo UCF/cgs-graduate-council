@@ -13,6 +13,8 @@ namespace file_post_type{
         add_action('admin_init', 'file_post_type\plugin_meta_box'); // admin_init is triggered before any other hook when a user accesses the admin area.
         add_action('admin_enqueue_scripts', 'file_post_type\plugin_admin_scripts');
         add_action('save_post', 'file_post_type\plugin_save_post', 10, 2);
+        add_action('rest_api_init', 'file_post_type\register_rest_get_files_route');
+
 
         function plugin_admin_scripts($page)
         {
@@ -58,6 +60,7 @@ namespace file_post_type{
 					'publicly_queryable' => false,
 					'show_ui' => true,
                     'has_archive' => true,
+                    'show_in_rest' => true,
                     'rewrite' => array('slug' => 'uploads'),
                     'supports' => array('title', 'page-attributes'),
                     'show_in_menu' => true,
@@ -199,6 +202,7 @@ namespace file_post_type{
             </div>
         <?php
         }
+
         function plugin_scripts()
         {
             if (!is_admin()) {
@@ -206,6 +210,48 @@ namespace file_post_type{
                 wp_register_script('jquery', ("http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"), false, '1.11.3');
                 wp_enqueue_script('jquery');
             }
+        }
+
+        function register_rest_get_files_route() {
+            register_rest_route( 'graduate/v2', '/files/', array(
+                'methods' => 'GET',
+                'callback' => 'file_post_type\rest_get_files',
+            ) );
+        }
+
+        function rest_get_files( $data ) {
+            $args = array(
+                'post_type' => 'gs_file',
+                'post_status' => 'publish',
+                'order' => 'ASC',
+                'orderby' => 'title',
+                'posts_per_page' => -1,
+            );
+
+            $items = array();
+            $query = new \WP_Query( $args );
+            if($query->have_posts()):
+                while ($query->have_posts()):
+                    $query->the_post();
+
+                    $ID = get_the_ID();
+
+                    $meta = \get_post_meta( $ID );
+
+                    array_push( $items, array(
+                        "ID"            => $ID,
+                        "title"         => get_the_title(),
+                        "file_url"      => $meta['file_url'][0],
+                        "committee"     => $meta['committee'][0],
+                        "document-type" => $meta['document-type'][0],
+                        "year"          => $meta['year'][0],
+                    ) );
+
+                endwhile;
+            endif;
+            wp_reset_query();
+
+            return $items;
         }
 
         // ---

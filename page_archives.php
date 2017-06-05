@@ -106,46 +106,9 @@ get_header(); ?>
                         <tr><td colspan="4">No results</td></tr>
                     </tbody>
                 </table>
-                <?php
-                $args = array(
-                    'post_type' => 'gs_file',
-                    'posts_per_page' => -1,
-                    'order' => 'ASC',
-                    'orderby' => 'title'
-                );
-
-                $query_files = new WP_Query($args);
-
-
-                if ($query_files->have_posts()):
-
-                    $json = array();
-
-                    while ($query_files->have_posts()):
-                        $query_files->the_post();
-
-                        $meta = get_post_meta( $post->ID );
-
-                        array_push( $json, array(
-                            'id'            => $post->ID,
-                            'title'         => get_the_title(),
-                            'file_url'      => $meta[ 'file_url' ][ 0 ],
-                            'committee'     => $meta[ 'committee' ][ 0 ],
-                            'document-type' => $meta[ 'document-type' ][ 0 ],
-                            'year'          => $meta[ 'year' ][ 0 ],
-                        ));
-
-                    endwhile;
-                    ?>
-                    <script>
-                        var files = <?php echo json_encode( $json ); ?>;
-                    </script>
-                    <?php
-                endif;
-                wp_reset_query();
-                ?>
             </div>
             <script>
+                var files = [];
                 var $html = {
                     years: document.getElementsByName( "years" ),
                     committees: document.getElementsByName( "committee" ),
@@ -159,6 +122,20 @@ get_header(); ?>
                     "document-type": []
                 };
                 var sortFilesBy = '+title';
+
+                window.onload = function init() {
+                    $.ajax( { // archives is in file-post.php
+                        url: wpApiSettings.root + 'graduate/v2/files/', // wpApiSettings is defined in functions.php\twentysixteen_scripts()
+                        method: 'GET',
+                        beforeSend: function ( xhr ) {
+                            xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+                        }
+                    } ).done( function ( response ) {
+                        files = response;
+
+                        updateFiles( files );
+                    } );
+                };
 
                 function setSortBy( element ) {
 
@@ -263,9 +240,6 @@ get_header(); ?>
 
                     return r;
                 }
-                window.onload = function() {
-                    updateFiles( files );
-                };
             </script>
         <div class="clear"></div>
         <div>
