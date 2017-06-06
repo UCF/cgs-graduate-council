@@ -31,56 +31,24 @@ get_header(); ?>
             <div>
                 <div class="col-xs-3">
                     <h3><span>Year</span></h3>
-                    <div id="years">
-
-                    </div>
+                    <div id="years"></div>
                 </div>
                 <div class="col-xs-9">
                     <div id="members"></div>
                 </div>
                 <div style="clear: both;"></div>
-                <div>
-                    <?php edit_post_link('Edit Page');?>
-                </div>
-                <script>
-                    var _current_year = "<?php echo $setting_current_year; ?>";
-                    var _committee = "<?php echo $setting_committee; ?>";
-
-                    var $members = document.getElementById('members');
-                    var $years = document.getElementById('years');
-
-                    var members = [];
-
-                    window.onload = function init(){
-                        var years = getQueryVariable("years");
-
-                        if( !/\d{4,}-\d{4,}/ig.test( years ) )
-                            years = _current_year;
-
-                        $.ajax( {
-                            url: wpApiSettings.root + 'graduate/v2/members/' + _committee, // wpApiSettings is defined in functions.php\twentysixteen_scripts()
-                            method: 'GET',
-                            beforeSend: function ( xhr ) {
-                                xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-                            }
-                        } ).done( function ( response ) {
-                            members = response;
-
-                            // Generates titles for each committee a member belongs to.
-                            normalizeMembers( members );
-
-                            var filteredMembers = updateMembers( members, _committee, years ); // Filters and sorts by Committee, then Alpha
-
-                            $members.innerHTML = renderMembers( filteredMembers, _committee, years, false );
-                            $years.innerHTML = renderYears( generateYears( members, _committee ), years );
-                            fixMemberBoxes();
-                        } );
-                    };
-                </script>
+                <div><?php edit_post_link('Edit Page');?></div>
             </div>
         </div>
     </main><!-- .site-main -->
-
+    <?php
+    wp_register_script( 'members-archive', get_template_directory_uri() . '/js/page_members-archive.js' );
+    wp_localize_script( 'members-archive', 'settings', array(
+        'currentYear' => $setting_current_year,
+        'committee' => trim( $setting_committee ),
+    ) );
+    wp_enqueue_script( 'members-archive' );
+    ?>
     <?php get_sidebar( 'content-bottom' ); ?>
 
 </div><!-- .content-area -->

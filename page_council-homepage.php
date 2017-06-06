@@ -6,21 +6,22 @@
  * @subpackage Twenty_Fourteen
  * @since Twenty Fourteen 1.0
  */
-get_header(); ?>
+get_header();
+
+$setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
+$title = '';
+$setting_committee = '';
+$page_meta_settings = array();
+
+?>
 <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
         <?php
-        $title = '';
         function getFileUrl( $gs_file_id ) {
             $meta = get_post_meta( $gs_file_id );
 
             return esc_html( (( !empty( $meta['file_url']  ) )? $meta['file_url'][0]  : '') ) ;
         }
-
-        $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
-        $setting_committee = '';
-        $page_meta_settings = array();
-
 
         while ( have_posts() ) : the_post();
             $id = get_the_ID();
@@ -186,41 +187,22 @@ get_header(); ?>
             <div>
                 <div id="members"></div>
                 <div style="clear: both;"></div>
-                <script>
-                    var _current_year = "<?php echo trim( esc_attr( get_option( 'current_year' ) ) ); ?>";
-                    var _committee = "<?php echo trim( $setting_committee ); ?>";
-
-                    var $members = document.getElementById('members');
-
-                    var members = [];
-                    window.onload = function init() {
-                        $.ajax( {
-                            url: wpApiSettings.root + 'graduate/v2/members/' + _committee, // wpApiSettings is defined in functions.php\twentysixteen_scripts()
-                            method: 'GET',
-                            beforeSend: function ( xhr ) {
-                                xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-                            }
-                        } ).done( function ( response ) {
-                            members = response;
-
-                            // Generates titles for each committee a member belongs to.
-                            normalizeMembers( members );
-
-                            var filteredMembers = updateMembers( members, _committee, _current_year ); // Filters and sorts by Committee, then Alpha
-
-                            $members.innerHTML = renderMembers( filteredMembers, _committee, _current_year, false );
-                            fixMemberBoxes();
-                        } );
-                    };
-                </script>
-
                 <div>
                     <?php edit_post_link('Edit Page');?>
                 </div>
             </div>
         </div>
     </main><!-- .site-main -->
+    <?php
 
+    wp_register_script( 'council-homepage', get_template_directory_uri() . '/js/page_council-homepage.js' );
+    wp_localize_script( 'council-homepage', 'settings', array(
+        'currentYear' => $setting_current_year,
+        'committee' => trim( $setting_committee ),
+    ) );
+    wp_enqueue_script( 'council-homepage' );
+
+    ?>
     <?php get_sidebar( 'content-bottom' ); ?>
 
 </div><!-- .content-area -->

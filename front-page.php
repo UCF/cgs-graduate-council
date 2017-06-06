@@ -1,6 +1,8 @@
 <?php
 get_header();
+
 $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
+
 ?>
         <div id="primary" class="content-area">
             <main id="main" class="site-main" role="main">
@@ -35,35 +37,15 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
                         <div style="clear:both;"></div>
                    </div><!-- .content-tile -->
             </main><!-- .site-main -->
-            <script>
-                var _current_year = "<?php echo trim( esc_attr( get_option( 'current_year' ) ) ); ?>";
-                var $members = document.getElementById('members');
-                var showAllGroupName = "All Current Members";
-
-                var members = [];
-
-                window.onload = function init() {
-                    $.ajax( {
-                        url: wpApiSettings.root + 'graduate/v2/members/', // wpApiSettings is defined in functions.php\twentysixteen_scripts()
-                        method: 'GET',
-                        beforeSend: function ( xhr ) {
-                            xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-                        }
-                    } ).done( function ( response ) {
-                        members = response;
-                        normalizeMembers( members );
-
-                        var filteredMembers = updateMembers( members, 'council_serving_years', _current_year );
-
-                        $members.innerHTML = renderMembersGroup(showAllGroupName, filteredMembers, 'council_serving_years', _current_year );
-                        fixMemberBoxes();
-                    } );
-                };
-
-            </script>
             <?php get_sidebar( 'content-bottom' ); ?>
         </div>
     </div><!-- .content-area -->
-
+<?php
+wp_register_script( 'front-page', get_template_directory_uri() . '/js/front-page.js' );
+wp_localize_script( 'front-page', 'settings', array(
+    'currentYear' => $setting_current_year
+) );
+wp_enqueue_script( 'front-page' );
+?>
 <?php get_sidebar(); ?>
 <?php get_footer(); ?>
