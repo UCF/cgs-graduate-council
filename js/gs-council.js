@@ -357,7 +357,7 @@ function actionChangeCouncil( elem ) {
     var filteredMembers;
 
     if( elem.value == 'byCollege' ) {
-        filteredMembers = updateMembers( members, 'council_serving_years', _current_year );
+        filteredMembers = updateMembers( members, 'council_serving_years', settings.currentYear );
         var membersByCollege = groupMembersByCollege( filteredMembers );
 
         $members.innerHTML = '';
@@ -366,7 +366,7 @@ function actionChangeCouncil( elem ) {
 
         for( var i = 0; i < colleges.length; i++ ) {
             var college = colleges[ i ];
-            $members.innerHTML += renderMembersGroup( college, membersByCollege[college], 'council_serving_years', _current_year);
+            $members.innerHTML += renderMembersGroup( college, membersByCollege[college], 'council_serving_years', settings.currentYear );
         }
     } else {
 
@@ -390,8 +390,8 @@ function actionChangeCouncil( elem ) {
                 break;
         }
 
-        filteredMembers = updateMembers( members, elem.value, _current_year );
-        $members.innerHTML = renderMembersGroup( groupName, filteredMembers, elem.value, _current_year );
+        filteredMembers = updateMembers( members, elem.value, settings.currentYear );
+        $members.innerHTML = renderMembersGroup( groupName, filteredMembers, elem.value, settings.currentYear );
     }
 
     fixMemberBoxes();
