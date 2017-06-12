@@ -20,7 +20,7 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
                 <div style="clear:both;"></div>
               	<div class="content-tile">
                     <div style="float: right;">
-                        <select id="committee-select" onchange="actionChangeCouncil( this )">
+                        <select id="committee-select" onchange="actionChangeCouncil( this );dataLayer.push({'event': 'frontpage-member-sort-change'});">
                             <option value="council_serving_years">Show all</option>
                             <option value="byCollege">List by College</option>
                             <option value="appeals_serving_years">Appeals</option>

@@ -84,7 +84,7 @@ get_header(); ?>
                 <div style="float:right; margin-top: 10px;">
                     <label>
                         Sort By:
-                        <select class="archive-sort" onchange="setSortBy( this )">
+                        <select class="archive-sort" onchange="setSortBy( this );dataLayer.push({'event': 'archive-sort-change'});">
                             <option value="+title">File name</option>
                             <option value="-year">Year</option>
                             <option value="+committee">Committee</option>
