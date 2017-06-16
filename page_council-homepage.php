@@ -179,7 +179,7 @@ get_header(); ?>
                 $setting_first_year = $setting_current_years[ 0 ];
                 $setting_last_year  = $setting_current_years[ 1 ];
 
-                $cutDate        = '7/1/2017';
+                $cutDate        = '8/15/2017';
                 $cutDateParts   = explode( '/', $cutDate );
                 $cutMonth       = $cutDateParts[ 0 ];
                 $cutDay         = $cutDateParts[ 1 ];
