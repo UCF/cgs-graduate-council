@@ -3650,7 +3650,6 @@ p > video {
 	body:not(.search-results) .entry-summary blockquote > ol {
 		margin-left: 1.52173913em;
 	}
-
 	body:not(.search-results) .entry-summary blockquote {
 		font-size: 23px;
 		font-size: 1.4375rem;
@@ -4204,7 +4203,8 @@ h3 span{
 }
 
 label{
-	    text-indent: -24px;
+    cursor: pointer;
+    text-indent: -24px;
     display: block;
     padding-left: 24px;
 }
