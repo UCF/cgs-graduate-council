@@ -257,6 +257,18 @@ function twentysixteen_scripts() {
 
 	// Theme stylesheet.
 	wp_enqueue_style( 'twentysixteen-style', get_stylesheet_uri() );
+    $background_image_style = "
+        #masthead{
+	        background:url('" . get_template_directory_uri() . "/images/hero.png');
+            background-repeat:no-repeat;
+            background-size:cover;
+            background-position:center;
+        }
+    ";
+    wp_add_inline_style( 'twentysixteen-style', $background_image_style );
+
+
+
 
 	// Load the Internet Explorer specific stylesheet.
 	wp_enqueue_style( 'twentysixteen-ie', get_template_directory_uri() . '/css/ie.css', array( 'twentysixteen-style' ), '20160816' );
