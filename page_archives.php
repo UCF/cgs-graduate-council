@@ -34,7 +34,7 @@ get_header(); ?>
         wp_reset_query();
 
         ?>
-            <div class="col-xs-3" style="padding-right:20px;">
+            <div class="col-xs-12 col-sm-3" style="padding-right:20px;">
                 <h2>Filters</h2>
                 <h3><span>Year</span></h3>
                 <ul id="years_holder" class="list-no-bullet">
@@ -80,7 +80,7 @@ get_header(); ?>
                     <?php } ?>
                 </ul>
             </div>
-            <div class="col-xs-9">
+            <div class="col-xs-12 col-sm-9">
                 <div style="float:right; margin-top: 10px;">
                     <label>
                         Sort By:
