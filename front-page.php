@@ -9,7 +9,7 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
 
             	<div class="content-tile">
                     <h1 class="entry-title">About the Graduate Council</h1>
-                    <img src="/wp-content/themes/graduate-council/images/mh.png" id="front-page-image"/>
+                    <img src="<?php echo get_template_directory_uri(); ?>/images/mh.png" id="front-page-image"/>
                     <p>
                         UCF graduate education depends on the participation of its faculty on university committees for guidance and decisions. The Graduate Council is a standing committee of the Faculty Senate and is comprised of four Graduate Committees: Appeals, Curriculum, Policy, and Program Review and Awards. A number of other working groups and committees assist with graduate education at UCF and provide valuable services.
                     </p>
