@@ -116,7 +116,7 @@ get_header(); ?>
                             'id'            => $post->ID,
                             'date'          => $date,
                             'stamp'         => $stamp,
-                            'meeting'       => $meta['date'][0] . ' ' . str_replace('0','',$meta['hour'][0] ) .':'.$meta['minutes'][0].' '.$meta['meridiem'][0] . ' - ' . $meta['location'][0],
+                            'meeting'       => $meta['date'][0] . ' ' . sprintf('%02d', $meta['hour'][0] ) .':'.$meta['minutes'][0].' '.$meta['meridiem'][0] . ' - ' . $meta['location'][0],
                             'location'      => valueFromMeta( $meta, 'location' ),
                             'deadline'      => valueFromMeta( $meta, 'deadline' ),
                             'agenda_id'     => valueFromMeta( $meta, 'agenda_id' ),
