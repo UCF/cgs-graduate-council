@@ -130,7 +130,7 @@ $page_meta_settings = array();
                 wp_reset_query();
 				
 				function stamp_comparator ( $a, $b ) {
-					return strcmp( $a["stamp"], $b["stamp"] ) * -1;
+					return strcmp( $a["stamp"], $b["stamp"] ) * 1;
 				}
 				
 				usort( $meetings, "stamp_comparator" );
