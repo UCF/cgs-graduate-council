@@ -51,6 +51,7 @@ $page_meta_settings = array();
             $args = array(
                 'post_type' => 'gs_meetings',
                 'posts_per_page' => -1,
+                'post_status ' => 'published',
                 'meta_query' =>
                     array(
                         array(
@@ -128,13 +129,13 @@ $page_meta_settings = array();
                     endwhile;
                 endif;
                 wp_reset_query();
-				
+
 				function stamp_comparator ( $a, $b ) {
 					return strcmp( $a["stamp"], $b["stamp"] ) * 1;
 				}
-				
+
 				usort( $meetings, "stamp_comparator" );
-				
+
                 if( !count( $meetings )) {
                     echo '<tr><td colspan="' . $colCount . '">No meetings have been scheduled as of yet.</td></tr>';
                 } else {
@@ -144,7 +145,7 @@ $page_meta_settings = array();
                         <tr>
                             <?php
                             echo '<td>' . $meeting['meeting'] . ' ';
-                            edit_post_link('Edit Meeting');
+                            edit_post_link('Edit Meeting', '', '', $meeting['id'] );
                             echo '</td>';
 
                             if( !empty($setting_hasSubmitDate) )
