@@ -292,11 +292,6 @@ function twentysixteen_scripts() {
 		'expand'   => __( 'expand child menu', 'twentysixteen' ),
 		'collapse' => __( 'collapse child menu', 'twentysixteen' ),
 	) );
-    wp_enqueue_script( 'wp-api', get_template_directory_uri() . '/js/functions.js', array( 'jquery' ), '20160816', true );
-    wp_localize_script( 'wp-api', 'wpApiSettings', array(
-        'root' => \esc_url_raw( rest_url() ),
-        'nonce' => \wp_create_nonce( 'wp_rest' )
-    ) );
 }
 add_action( 'wp_enqueue_scripts', 'twentysixteen_scripts' );
 

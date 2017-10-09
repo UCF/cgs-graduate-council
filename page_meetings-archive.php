@@ -53,7 +53,6 @@ get_header(); ?>
             $args = array(
                 'post_type' => 'gs_meetings',
                 'posts_per_page' => -1,
-                'post_status ' => 'published',
                 'meta_query' =>
                     array(
                         array(
