@@ -347,57 +347,6 @@ function renderYears( years, currentYear ) {
 }
 
 /**
- * actionChangeCouncil
- * Accepts an element that can be triggered by a button or dropdown menu, and re-renders members.
- * Assumes: $members, members, and _current_year are valid variables in the current scope, and tries to write to $members
- * Used on the front-page.php
- * @param elem
- */
-function actionChangeCouncil( elem ) {
-    var filteredMembers;
-
-    if( elem.value == 'byCollege' ) {
-        filteredMembers = updateMembers( members, 'council_serving_years', settings.currentYear );
-        var membersByCollege = groupMembersByCollege( filteredMembers );
-
-        $members.innerHTML = '';
-
-        var colleges = Object.keys(membersByCollege).sort();
-
-        for( var i = 0; i < colleges.length; i++ ) {
-            var college = colleges[ i ];
-            $members.innerHTML += renderMembersGroup( college, membersByCollege[college], 'council_serving_years', settings.currentYear );
-        }
-    } else {
-
-        var groupName = '';
-
-        switch( elem.value ) {
-            case "council_serving_years":
-                groupName = showAllGroupName;
-                break;
-            case "appeals_serving_years":
-                groupName = "Appeals Council Members";
-                break;
-            case "curriculum_serving_years":
-                groupName = "Curriculum Council Members";
-                break;
-            case "policy_serving_years":
-                groupName = "Policy Council Members";
-                break;
-            case "program_serving_years":
-                groupName = "Program Review and Awards Committee Members";
-                break;
-        }
-
-        filteredMembers = updateMembers( members, elem.value, settings.currentYear );
-        $members.innerHTML = renderMembersGroup( groupName, filteredMembers, elem.value, settings.currentYear );
-    }
-
-    fixMemberBoxes();
-}
-
-/**
  *  Returns the value of the URI
  * @param {string} variable
  * @returns {*}

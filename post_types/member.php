@@ -13,8 +13,6 @@ namespace member_type{
         add_action('admin_init', 'member_type\plugin_meta_box'); // admin_init is triggered before any other hook when a user accesses the admin area.
         add_action('admin_enqueue_scripts', 'member_type\plugin_admin_scripts');
         add_action('save_post', 'member_type\plugin_save_post', 10, 2);
-        add_action('rest_api_init', 'member_type\register_rest_get_members_route');
-        add_action('rest_api_init', 'member_type\register_rest_get_members_by_committee_year_route');
 
         function plugin_admin_scripts($page)
         {
@@ -45,7 +43,6 @@ namespace member_type{
                     'description' => 'Member details',
                     'public' => true,
                     'has_archive' => true,
-                    'show_in_rest' => true,
                     'rewrite' => array('slug' => 'member'),
                     'supports' => array( 'title', 'page-attributes' ),
                     'show_in_menu' => true,
@@ -594,108 +591,6 @@ namespace member_type{
             </script>
         <?php
         }
-        function register_rest_get_members_by_committee_year_route() {
-            register_rest_route( 'graduate/v2', '/members/(?P<committee>\w+)', array(
-                'methods' => 'GET',
-                'callback' => 'member_type\rest_get_members_by_group',
-            ) );
-        }
-        function register_rest_get_members_route() {
-            register_rest_route( 'graduate/v2', '/members/', array(
-                'methods' => 'GET',
-                'callback' => 'member_type\rest_get_members',
-            ) );
-        }
-
-        function rest_get_members_by_group( $data ) {
-            $args = array(
-                'post_type' => 'gs_member',
-                'post_status' => 'publish',
-                'posts_per_page' => -1,
-                'meta_query' =>
-                    array(
-                        array(
-                            'key'       => $data['committee'],
-                            'value'     => '',
-                            'compare'   => '!=',
-                        )
-                    ),
-
-            );
-
-            $members = array();
-            $query_members = new \WP_Query( $args );
-            if($query_members->have_posts()):
-                while ($query_members->have_posts()):
-                    $query_members->the_post();
-
-                    $ID = get_the_ID();
-
-                    $meta = \get_post_meta( $ID );
-
-                    array_push( $members, array(
-                        "ID"                                       => $ID,
-                        "first_name"                               => $meta['first_name'][0],
-                        "last_name"                                => $meta['last_name'][0],
-                        "email"                                    => $meta['email'][0],
-                        "college"                                  => $meta['college'][0],
-                        "faculty_senate_member"                    => $meta['faculty_senate_member'][0],
-                        "faculty_senate_steering_committee_member" => $meta['faculty_senate_steering_committee_member'][0],
-                        "council_serving_years"                    => ( !empty($meta['council_serving_years'][0]) )? $meta['council_serving_years'][0]: '',
-                        "curriculum_serving_years"                 => ( !empty($meta['curriculum_serving_years'][0]) )? $meta['curriculum_serving_years'][0]: '',
-                        "policy_serving_years"                     => ( !empty($meta['policy_serving_years'][0]) )? $meta['policy_serving_years'][0]: '',
-                        "appeals_serving_years"                    => ( !empty($meta['appeals_serving_years'][0]) )? $meta['appeals_serving_years'][0]: '',
-                        "program_serving_years"                    => ( !empty($meta['program_serving_years'][0]) )? $meta['program_serving_years'][0]: '',
-                        "url"                                      => esc_url( get_edit_post_link( $ID ) )
-                    ) );
-
-                endwhile;
-            endif;
-            wp_reset_query();
-
-            return $members;
-        }
-
-        function rest_get_members( $data ) {
-            $args = array(
-                'post_type' => 'gs_member',
-                'post_status' => 'publish',
-                'posts_per_page' => -1,
-            );
-
-            $members = array();
-            $query_members = new \WP_Query( $args );
-            if($query_members->have_posts()):
-                while ($query_members->have_posts()):
-                    $query_members->the_post();
-
-                    $ID = get_the_ID();
-
-                    $meta = \get_post_meta( $ID );
-
-                    array_push( $members, array(
-                        "ID"                                       => $ID,
-                        "first_name"                               => $meta['first_name'][0],
-                        "last_name"                                => $meta['last_name'][0],
-                        "email"                                    => $meta['email'][0],
-                        "college"                                  => $meta['college'][0],
-                        "faculty_senate_member"                    => $meta['faculty_senate_member'][0],
-                        "faculty_senate_steering_committee_member" => $meta['faculty_senate_steering_committee_member'][0],
-                        "council_serving_years"                    => ( !empty($meta['council_serving_years'][0]) )? $meta['council_serving_years'][0]: '',
-                        "curriculum_serving_years"                 => ( !empty($meta['curriculum_serving_years'][0]) )? $meta['curriculum_serving_years'][0]: '',
-                        "policy_serving_years"                     => ( !empty($meta['policy_serving_years'][0]) )? $meta['policy_serving_years'][0]: '',
-                        "appeals_serving_years"                    => ( !empty($meta['appeals_serving_years'][0]) )? $meta['appeals_serving_years'][0]: '',
-                        "program_serving_years"                    => ( !empty($meta['program_serving_years'][0]) )? $meta['program_serving_years'][0]: '',
-                        "url"                                      => esc_url( get_edit_post_link( $ID ) )
-                    ) );
-
-                endwhile;
-            endif;
-            wp_reset_query();
-
-            return $members;
-        }
-
         function plugin_scripts()
         {
             if (!is_admin()) {

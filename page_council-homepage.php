@@ -17,6 +17,95 @@ $page_meta_settings = array();
 <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
         <?php
+        $title = '';
+        function roleDetails( $role ) {
+            $parts = explode( ' ', $role );
+            $year = $parts[0];
+            $parts[0] = '';
+
+            return array(
+                'year' => $year,
+                'title' => trim( implode( ' ', $parts ) )
+            );
+        }
+        function title( $roles, $year ) {
+            $r = '';
+            $roles_split = explode( ',', $roles );
+            for( $i = 0; $i < count( $roles_split ); $i++ ) {
+                $role = $roles_split[ $i ];
+                $roleDetails = roleDetails( $role );
+                if( $roleDetails['year'] == $year && strpos( strtolower( $roleDetails['title']), 'member' ) === false ) {
+                    $r .= $roleDetails['title'];
+                }
+            }
+            return $r;
+        }
+        function titles( $meta, $key, $group, $year ){
+            $r = '';
+            if( !empty( $meta[ $key ] ) ) {
+                $membership = explode( ',', $meta[ $key ][0] );
+                for( $i = 0; $i < count( $membership ); $i++ ) {
+                    $roleDetails = roleDetails( $membership[$i] );
+                    if( $roleDetails['year'] == $year) {
+                        $r .= '<ul class="memberSub">';
+                        $r .= '<li>' . $group;
+                        if( strtolower( trim( $roleDetails['title'] ) ) != 'member' ) :
+                        $r .= '( '. $roleDetails['title'] .' )';
+                        endif;
+                        $r .= '</li>';
+                        $r .= '</ul>';
+                    }
+                }
+
+            }
+            return $r;
+        }
+        function renderMember( $details, $settings, $year ) {
+            $post = get_post();
+            $setting_committee = $settings['committee'][0];
+
+            $highest_rank = title( $details[ $setting_committee ][0], $year );
+
+            $r =    '<div class="memberBox">' .
+                    '<div class="memberName">' .
+                    '<a href="mailto:'. $details['email'][0] .'">'.
+                        $details['first_name'][0] . '&nbsp;' . $details['last_name'][0].
+                    '</a>';
+
+            if( !empty( $details['faculty_senate_steering_committee_member'][0] ) ) { $r .= '<sup style="font-weight: normal"> ‡</sup>'; }
+            if( !empty( $details['faculty_senate_member'][0] ) ) { $r .= ' *'; }
+
+            $r .=   '</div>';
+
+
+            $r .=   '<div class="memberRank">' . $highest_rank . '</div>';
+
+            $r .= '<div class="memberCollege">'.
+                $details['college'][0] .
+                '</div>';
+
+
+            if( !empty(  $settings['show_committees'][0] ) ) {
+                if( $setting_committee != 'curriculum_serving_years' )
+                    $r .= titles( $details, 'curriculum_serving_years', 'Curriculum', $year );
+                if( $setting_committee != 'appeals_serving_years' )
+                    $r .= titles( $details, 'appeals_serving_years', 'Appeals and Awards', $year );
+                if( $setting_committee != 'policy_serving_years' )
+                    $r .= titles( $details, 'policy_serving_years', 'Policy and Procedures', $year );
+                if( $setting_committee != 'program_serving_years' )
+                    $r .= titles( $details, 'program_serving_years', 'Program Review', $year );
+            }
+
+            if ( $url = get_edit_post_link( $post->ID ) ) {
+                $r .= '<a href="' . esc_url( $url ) . '">Edit Member</a>';
+            }
+            $r .= '</div>';
+
+            return array(
+                'title' => strtolower( $highest_rank ),
+                'card' => $r
+            );
+        }
         function getFileUrl( $gs_file_id ) {
             $meta = get_post_meta( $gs_file_id );
 
@@ -51,7 +140,7 @@ $page_meta_settings = array();
             $args = array(
                 'post_type' => 'gs_meetings',
                 'posts_per_page' => -1,
-                'post_status ' => 'published',
+				'post_status ' => 'published',
                 'meta_query' =>
                     array(
                         array(
@@ -114,7 +203,7 @@ $page_meta_settings = array();
 
                         if( $firstCutDate < $stamp && $stamp < $lastCutDate ) {
                             $meeting = array(
-                                'id'            => $post->id,
+                                'id'            => $post->ID,
                                 'date'          => $date,
                                 'stamp'         => $stamp,
                                 'meeting'       => $meta['date'][0] . ' ' . sprintf('%02d', $meta['hour'][0] ) .':'.$meta['minutes'][0].' '.$meta['meridiem'][0] . ' - ' . $meta['location'][0],
@@ -129,13 +218,13 @@ $page_meta_settings = array();
                     endwhile;
                 endif;
                 wp_reset_query();
-
+				
 				function stamp_comparator ( $a, $b ) {
 					return strcmp( $a["stamp"], $b["stamp"] ) * 1;
 				}
-
+				
 				usort( $meetings, "stamp_comparator" );
-
+				
                 if( !count( $meetings )) {
                     echo '<tr><td colspan="' . $colCount . '">No meetings have been scheduled as of yet.</td></tr>';
                 } else {
@@ -145,7 +234,7 @@ $page_meta_settings = array();
                         <tr>
                             <?php
                             echo '<td>' . $meeting['meeting'] . ' ';
-                            edit_post_link('Edit Meeting', '', '', $meeting['id'] );
+							edit_post_link('Edit Meeting', '', '', $meeting['id'] );
                             echo '</td>';
 
                             if( !empty($setting_hasSubmitDate) )
@@ -186,24 +275,68 @@ $page_meta_settings = array();
 			<div class="memberRank">‡ denotes a faculty senate steering committee member</div>
             <div class="memberRank">* denotes a faculty senate member</div>
             <div>
-                <div id="members"></div>
+                <?php
+                $args = array(
+                    'post_type' => 'gs_member',
+                    'posts_per_page' => -1,
+                    'meta_query' =>
+                        array(
+                            array(
+                                'key'       => $setting_committee,
+                                'value'     => $setting_current_year,
+                                'compare'   => 'LIKE',
+                            )
+                        ),
+                );
+                ?>
+                <div>
+                <?php
+                $member_order = array(
+                    'chair',
+					'vice',
+                    'vice-chair',
+                    'liaison',
+                    'student',
+                    'ex',
+                    'member',
+                    '',
+                );
+
+                $members = array();
+                $query_members = new WP_Query( $args );
+                if($query_members->have_posts()):
+                    while ($query_members->have_posts()):
+                        $query_members->the_post();
+
+                        $meta = get_post_meta( $post->ID );
+                        array_push( $members, renderMember( $meta, $page_meta_settings, $setting_current_year ) );
+
+                    endwhile;
+                endif;
+                wp_reset_query();
+
+                for( $member_order_counter = 0; $member_order_counter < count( $member_order ); $member_order_counter++ ) {
+                    $order = $member_order[ $member_order_counter ];
+                    for( $i = 0; $i < count( $members ); $i++ ) {
+                        $member = $members[ $i ];
+						
+						$firstTitleWord = explode( ' ', $member['title'])[0];
+						
+						if( strtolower( $firstTitleWord ) === $order )
+                            echo $member['card'];
+                    }
+                }
+                ?>
+                </div>
                 <div style="clear: both;"></div>
+
                 <div>
                     <?php edit_post_link('Edit Page');?>
                 </div>
             </div>
         </div>
     </main><!-- .site-main -->
-    <?php
 
-    wp_register_script( 'council-homepage', get_template_directory_uri() . '/js/page_council-homepage.js' );
-    wp_localize_script( 'council-homepage', 'settings', array(
-        'currentYear' => $setting_current_year,
-        'committee' => trim( $setting_committee ),
-    ) );
-    wp_enqueue_script( 'council-homepage' );
-
-    ?>
     <?php get_sidebar( 'content-bottom' ); ?>
 
 </div><!-- .content-area -->
