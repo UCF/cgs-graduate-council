@@ -169,8 +169,6 @@ function renderMember( member, council, years, showCouncils ) {
 
         if (member.appeals_serving_years && council != 'appeals_serving_years')
             r += renderTitles('Appeals and Awards', member.appeals_serving_years, years);
-        if (member.council_serving_years && council != 'council_serving_years')
-            r += renderTitles('Graduate Council', member.council_serving_years, years);
         if (member.curriculum_serving_years && council != 'curriculum_serving_years')
             r += renderTitles('Curriculum', member.curriculum_serving_years, years);
         if (member.policy_serving_years && council != 'policy_serving_years')
@@ -294,11 +292,16 @@ function normalizeMembers( members ) {
         /** @type {Member} */
         var member = members[ i ];
 
-        generateTitles( member, 'council_serving_years' );
         generateTitles( member, 'curriculum_serving_years' );
         generateTitles( member, 'policy_serving_years' );
         generateTitles( member, 'appeals_serving_years' );
         generateTitles( member, 'program_serving_years' );
+
+        member['council_serving_years'] =
+            member['curriculum_serving_years']
+                .concat(member['policy_serving_years'])
+                .concat(member['appeals_serving_years'])
+                .concat(member['program_serving_years']);
     }
 
     return members;

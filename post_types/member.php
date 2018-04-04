@@ -51,18 +51,6 @@ namespace member_type{
                 )
             );
             register_taxonomy(
-                'graduate_council_serving_years',
-                array( 'gs_member' ),
-                array(
-                    'labels' => array(
-                        'name' => __( 'Graduate Council Serving Years' ),
-                        'single' => __( 'Graduate Council Serving Year' ),
-                    ),
-                    'show_ui' => true,
-                    'public' => false,
-                )
-            );
-            register_taxonomy(
                 'curriculum_serving_years',
                 array( 'gs_member' ),
                 array(
@@ -112,7 +100,6 @@ namespace member_type{
             );
         }
         function remove_tax_meta_boxes () {
-            remove_meta_box( 'tagsdiv-graduate_council_serving_years', 'gs_member', 'side' );
             remove_meta_box( 'tagsdiv-curriculum_serving_years', 'gs_member', 'side' );
             remove_meta_box( 'tagsdiv-policy_serving_years', 'gs_member', 'side' );
             remove_meta_box( 'tagsdiv-appeals_serving_years', 'gs_member', 'side' );
@@ -162,7 +149,6 @@ namespace member_type{
             $data['faculty_senate_member']          = valueFromMeta( $meta, 'faculty_senate_member' );
             $data['faculty_senate_steering_committee_member']       = valueFromMeta( $meta, 'faculty_senate_steering_committee_member' );
 
-            $data['council_serving_years']      = valueFromMetaArray( $meta, 'council_serving_years' );
             $data['curriculum_serving_years']   = valueFromMetaArray( $meta, 'curriculum_serving_years' );
             $data['policy_serving_years']       = valueFromMetaArray( $meta, 'policy_serving_years' );
             $data['appeals_serving_years']      = valueFromMetaArray( $meta, 'appeals_serving_years' );
@@ -196,7 +182,6 @@ namespace member_type{
                 save_field( $id, 'faculty_senate_member', 'faculty_senate_member');
                 save_field( $id, 'faculty_senate_steering_committee_member', 'faculty_senate_steering_committee_member');
 
-                save_field( $id, 'council_serving_years', 'council_serving_years');
                 save_field( $id, 'curriculum_serving_years', 'curriculum_serving_years');
                 save_field( $id, 'policy_serving_years', 'policy_serving_years');
                 save_field( $id, 'appeals_serving_years', 'appeals_serving_years');
@@ -376,7 +361,7 @@ namespace member_type{
                     }
                 </style>
                 <table class="member_details_table" width="100%">
-                    <tr>
+                    <!---<tr>
                         <th class="table-label"><label for="council_serving_years">Graduate Council Serving Years:</label></th>
                         <td>
                             <input id="council_hidden" name="council_serving_years" type="hidden" value="<?php echo implode( ',', $data['council_serving_years'] ); ?>">
@@ -400,7 +385,7 @@ namespace member_type{
                                 </tfoot>
                             </table>
                         </td>
-                    </tr>
+                    </tr>--->
                     <tr>
                         <th class="table-label"><label for="curriculum_serving_years">Curriculum Committee Serving Years:</label></th>
                         <td>
@@ -505,12 +490,6 @@ namespace member_type{
             </div>
             <script>
                 var councils = {
-                    graduateCouncil: {
-                        add: document.getElementById('council_add'),
-                        body: document.getElementById('council_body'),
-                        hidden: document.getElementById('council_hidden'),
-                        select: document.getElementById('council_select')
-                    },
                     curriculum: {
                         add: document.getElementById('curriculum_add'),
                         body: document.getElementById('curriculum_body'),
