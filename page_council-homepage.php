@@ -89,11 +89,11 @@ $page_meta_settings = array();
                 if( $setting_committee != 'curriculum_serving_years' )
                     $r .= titles( $details, 'curriculum_serving_years', 'Curriculum', $year );
                 if( $setting_committee != 'appeals_serving_years' )
-                    $r .= titles( $details, 'appeals_serving_years', 'Appeals and Awards', $year );
+                    $r .= titles( $details, 'appeals_serving_years', 'Appeals', $year );
                 if( $setting_committee != 'policy_serving_years' )
-                    $r .= titles( $details, 'policy_serving_years', 'Policy and Procedures', $year );
+                    $r .= titles( $details, 'policy_serving_years', 'Policy', $year );
                 if( $setting_committee != 'program_serving_years' )
-                    $r .= titles( $details, 'program_serving_years', 'Program Review', $year );
+                    $r .= titles( $details, 'program_serving_years', 'Program Review and Awards', $year );
             }
 
             if ( $url = get_edit_post_link( $post->ID ) ) {

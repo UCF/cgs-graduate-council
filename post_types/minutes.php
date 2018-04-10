@@ -143,13 +143,13 @@ namespace minutes_type{
                         $council = "Curriculum";
                         break;
                     case "policy_serving_years":
-                        $council = "Policy and Procedures";
+                        $council = "Policy";
                         break;
                     case "appeals_serving_years":
-                        $council = "Appeals and Awards";
+                        $council = "Appeals";
                         break;
                     case "program_serving_years":
-                        $council = "Program Review";
+                        $council = "Program Review and Awards";
                         break;
                     case "":
                         $council = "";
@@ -318,9 +318,9 @@ namespace minutes_type{
                             <option <?php if( '' == $data['council'] ) { echo "selected"; } ?>></option>
                             <option value="council_serving_years" <?php if( 'council_serving_years' == $data['council'] ) { echo "selected"; } ?>>Graduate Council</option>
                             <option value="curriculum_serving_years" <?php if( 'curriculum_serving_years' == $data['council'] ) { echo "selected"; } ?>>Curriculum</option>
-                            <option value="policy_serving_years" <?php if( 'policy_serving_years' == $data['council'] ) { echo "selected"; } ?>>Policy and Procedures</option>
-                            <option value="appeals_serving_years" <?php if( 'appeals_serving_years' == $data['council'] ) { echo "selected"; } ?>>Appeals and Awards</option>
-                            <option value="program_serving_years" <?php if( 'program_serving_years' == $data['council'] ) { echo "selected"; } ?>>Program Review</option>
+                            <option value="policy_serving_years" <?php if( 'policy_serving_years' == $data['council'] ) { echo "selected"; } ?>>Policy</option>
+                            <option value="appeals_serving_years" <?php if( 'appeals_serving_years' == $data['council'] ) { echo "selected"; } ?>>Appeals</option>
+                            <option value="program_serving_years" <?php if( 'program_serving_years' == $data['council'] ) { echo "selected"; } ?>>Program Review and Awards</option>
                         </select>
                     </td>
                 </tr>

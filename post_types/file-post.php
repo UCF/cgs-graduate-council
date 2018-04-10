@@ -261,7 +261,7 @@ namespace file_post_type{
                     <option value="appeals_serving_years" <?php if( $committee == 'appeals_serving_years' )         echo "selected"; ?>>Appeals</option>
                     <option value="curriculum_serving_years" <?php if( $committee == 'curriculum_serving_years' )   echo "selected"; ?>>Curriculum</option>
                     <option value="policy_serving_years" <?php if( $committee == 'policy_serving_years' )           echo "selected"; ?>>Policy</option>
-                    <option value="program_serving_years" <?php if( $committee == 'program_serving_years' )         echo "selected"; ?>>Program Review</option>
+                    <option value="program_serving_years" <?php if( $committee == 'program_serving_years' )         echo "selected"; ?>>Program Review and Awards</option>
                 </select>
                 <label>Use Current Year Only:
                     <input name="current_year_only" type="checkbox" <?php if( $meta['current_year_only'][0] == 'on' ) echo "checked='checked'"; ?>>

@@ -148,7 +148,7 @@ namespace meetings_type{
                         $council = "Curriculum";
                         break;
                     case "policy_serving_years":
-                        $council = "Policy and Procedures";
+                        $council = "Policy";
                         break;
                     case "appeals_serving_years":
                         $council = "Appeals";

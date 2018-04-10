@@ -56,7 +56,7 @@ get_header(); ?>
                 <h3><span>Committee</span></h3>
                 <ul id="committees_holder" class="list-no-bullet">
                     <?php
-                    $committees = array( 'Appeals', 'Curriculum', 'Policy', 'Program Review' );
+                    $committees = array( 'Appeals', 'Curriculum', 'Policy', 'Program Review and Awards' );
                     $committee_values = array( 'appeals_serving_years', 'curriculum_serving_years', 'policy_serving_years', 'program_serving_years' );
                     for( $i = 0, $l = count( $committees ); $i < $l; $i++ ) { ?>
                         <li>
@@ -208,15 +208,12 @@ get_header(); ?>
 
                     for( var i = files.length; i --> 0; ) {
                         for( var j = filterForList.length; j --> 0; ) {
-                            console.log( filterForList[ j ].toLowerCase() );
                             if ( files[ i ][ filterBy ].toLowerCase() == filterForList[ j ].toLowerCase() ) {
                                 list.push( files[ i ] );
                                 break;
                             }
                         }
                     }
-
-                    console.log( filterBy, files, list );
 
                     return list;
                 }
@@ -237,7 +234,7 @@ get_header(); ?>
                         "appeals_serving_years": "Appeals",
                         "curriculum_serving_years": "Curriculum",
                         "policy_serving_years": "Policy",
-                        "program_serving_years": "Program Review"
+                        "program_serving_years": "Program Review and Awards"
                     };
 
                     var displayFileType = {

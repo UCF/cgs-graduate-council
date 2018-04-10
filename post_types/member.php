@@ -67,8 +67,8 @@ namespace member_type{
                 array( 'gs_member' ),
                 array(
                     'labels' => array(
-                        'name' => __( 'Policy and Procedures Serving Years' ),
-                        'single' => __( 'Policy and Procedures Serving Year' ),
+                        'name' => __( 'Policy Serving Years' ),
+                        'single' => __( 'Policy Serving Year' ),
                     ),
                     'show_ui' => true,
                     'public' => false,
@@ -79,8 +79,8 @@ namespace member_type{
                 array( 'gs_member' ),
                 array(
                     'labels' => array(
-                        'name' => __( 'Appeals and Awards Serving Years' ),
-                        'single' => __( 'Appeals and Awards Serving Year' ),
+                        'name' => __( 'Appeals Serving Years' ),
+                        'single' => __( 'Appeals Serving Year' ),
                     ),
                     'show_ui' => true,
                     'public' => false,
@@ -91,8 +91,8 @@ namespace member_type{
                 array( 'gs_member' ),
                 array(
                     'labels' => array(
-                        'name' => __( 'Program Review Committee Years' ),
-                        'single' => __( 'Program Review Committee Year' ),
+                        'name' => __( 'Program Review and Awards Committee Years' ),
+                        'single' => __( 'Program Review and Awards Committee Year' ),
                     ),
                     'show_ui' => true,
                     'public' => false,
@@ -462,7 +462,7 @@ namespace member_type{
                         </td>
                     </tr>
                     <tr>
-                        <th class="table-label"><label for="program_select">Program Review Committee Serving Years:</label></th>
+                        <th class="table-label"><label for="program_select">Program Review and Awards Committee Serving Years:</label></th>
                         <td>
                             <input id="program_hidden" name="program_serving_years" type="hidden" value="<?php echo implode( ',', $data['program_serving_years'] ); ?>">
                             <table class="role-table" width="100%">

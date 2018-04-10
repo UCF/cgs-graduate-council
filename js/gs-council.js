@@ -168,13 +168,13 @@ function renderMember( member, council, years, showCouncils ) {
         r += '<div class="memberDetails">';
 
         if (member.appeals_serving_years && council != 'appeals_serving_years')
-            r += renderTitles('Appeals and Awards', member.appeals_serving_years, years);
+            r += renderTitles('Appeals', member.appeals_serving_years, years);
         if (member.curriculum_serving_years && council != 'curriculum_serving_years')
             r += renderTitles('Curriculum', member.curriculum_serving_years, years);
         if (member.policy_serving_years && council != 'policy_serving_years')
-            r += renderTitles('Policy and Procedures', member.policy_serving_years, years);
+            r += renderTitles('Policy', member.policy_serving_years, years);
         if (member.program_serving_years && council != 'program_serving_years')
-            r += renderTitles('Program Review', member.program_serving_years, years);
+            r += renderTitles('Program Review and Awards', member.program_serving_years, years);
 
         r += '</div>';
     }
