@@ -91,8 +91,8 @@ namespace member_type{
                 array( 'gs_member' ),
                 array(
                     'labels' => array(
-                        'name' => __( 'Program Review and Awards Committee Years' ),
-                        'single' => __( 'Program Review and Awards Committee Year' ),
+                        'name' => __( 'Program Review and Awards Years' ),
+                        'single' => __( 'Program Review and Awards Year' ),
                     ),
                     'show_ui' => true,
                     'public' => false,
