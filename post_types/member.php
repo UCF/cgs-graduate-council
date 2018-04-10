@@ -107,6 +107,31 @@ namespace member_type{
         }
         add_action( 'admin_menu' , 'member_type\remove_tax_meta_boxes' );
 
+
+        add_filter( 'manage_gs_member_posts_columns', function($columns) {
+
+            unset( $columns['date'] );
+
+            return array_merge( $columns, array(
+                'college' => __('College'),
+                'date'      => __('Date'),
+            ));
+        });
+
+        add_action( 'manage_gs_member_posts_custom_column' , function ( $column, $post_id ) {
+            switch ( $column ) {
+                case 'college':
+                    $college   = get_post_meta( $post_id, 'college', true );
+
+                    if( !empty( $college ) )
+                        echo $college;
+                    else
+                        echo '-';
+
+                    break;
+            }
+        }, 10, 2 );
+
         function plugin_meta_box() {
             add_meta_box(
                 'gs_member',                     // is the required HTML id attribute
@@ -118,7 +143,7 @@ namespace member_type{
             );
             add_meta_box(
                 'gs_member_serving_years',                     // is the required HTML id attribute
-                'Serving Years',                     // is the text visible in the heading of the meta box section
+                'Committee Serving Years',                     // is the text visible in the heading of the meta box section
                 'member_type\plugin_display_details_meta_box2',  // is the callback which renders the contents of the meta box
                 'gs_member',                     // is the name of the custom post type where the meta box will be displayed
                 'normal',                           // defines the part of the page where the edit screen section should be shown
@@ -361,33 +386,8 @@ namespace member_type{
                     }
                 </style>
                 <table class="member_details_table" width="100%">
-                    <!---<tr>
-                        <th class="table-label"><label for="council_serving_years">Graduate Council Serving Years:</label></th>
-                        <td>
-                            <input id="council_hidden" name="council_serving_years" type="hidden" value="<?php echo implode( ',', $data['council_serving_years'] ); ?>">
-                            <table class="role-table" width="100%">
-                                <thead><tr><th>Memberships</th><th>Actions</th></tr></thead>
-                                <tbody id="council_body"><tr><td colspan="2">No History</td></tr></tbody>
-                                <tfoot>
-                                <tr>
-                                    <td>
-                                        <?php select_categories(
-                                            'graduate_council_serving_years',
-                                            'council_select',
-                                            $data['council_serving_years'],
-                                            false
-                                        ); ?>
-                                    </td>
-                                    <td class="small-table-column">
-                                        <button class="button" type="button" id="council_add" onclick="addRole('graduateCouncil')">Add</button>
-                                    </td>
-                                </tr>
-                                </tfoot>
-                            </table>
-                        </td>
-                    </tr>--->
                     <tr>
-                        <th class="table-label"><label for="curriculum_serving_years">Curriculum Committee Serving Years:</label></th>
+                        <th class="table-label"><label for="curriculum_serving_years">Curriculum Serving Years:</label></th>
                         <td>
                             <input id="curriculum_hidden" name="curriculum_serving_years" type="hidden" value="<?php echo implode( ',', $data['curriculum_serving_years'] ); ?>">
                             <table class="role-table" width="100%">
@@ -412,7 +412,7 @@ namespace member_type{
                         </td>
                     </tr>
                     <tr>
-                        <th class="table-label"><label for="policy_serving_years">Policy and Procedures Committee Serving Years:</label></th>
+                        <th class="table-label"><label for="policy_serving_years">Policy Serving Years:</label></th>
                         <td>
                             <input id="policy_hidden" name="policy_serving_years" type="hidden" value="<?php echo implode( ',', $data['policy_serving_years'] ); ?>">
                             <table class="role-table" width="100%">
@@ -437,7 +437,7 @@ namespace member_type{
                         </td>
                     </tr>
                     <tr>
-                        <th class="table-label"><label for="appeals_select">Appeals and Awards Committee Serving Years:</label></th>
+                        <th class="table-label"><label for="appeals_select">Appeals Serving Years:</label></th>
                         <td>
                             <input id="appeals_hidden" name="appeals_serving_years" type="hidden" value="<?php echo implode( ',', $data['appeals_serving_years'] ); ?>">
                             <table class="role-table" width="100%">
@@ -462,7 +462,7 @@ namespace member_type{
                         </td>
                     </tr>
                     <tr>
-                        <th class="table-label"><label for="program_select">Program Review and Awards Committee Serving Years:</label></th>
+                        <th class="table-label"><label for="program_select">Program Review and Awards Serving Years:</label></th>
                         <td>
                             <input id="program_hidden" name="program_serving_years" type="hidden" value="<?php echo implode( ',', $data['program_serving_years'] ); ?>">
                             <table class="role-table" width="100%">
