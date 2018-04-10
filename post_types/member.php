@@ -118,6 +118,24 @@ namespace member_type{
             ));
         });
 
+        add_filter('manage_edit-gs_member_sortable_columns', function( $columns ) {
+            $columns['college'] = 'college';
+
+            return $columns;
+        });
+
+        add_action( 'pre_get_posts', function( $query ) {
+            if( !is_admin() ) return;
+
+            $orderby = $query->get( 'orderby');
+
+            if( 'college' == $orderby ) {
+                $query->set('meta_key','college');
+                $query->set('orderby','meta_value');
+            }
+        });
+
+
         add_action( 'manage_gs_member_posts_custom_column' , function ( $column, $post_id ) {
             switch ( $column ) {
                 case 'college':
