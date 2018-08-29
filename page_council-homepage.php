@@ -182,13 +182,17 @@ $page_meta_settings = array();
                 $setting_first_year = $setting_current_years[ 0 ];
                 $setting_last_year  = $setting_current_years[ 1 ];
 
-                $cutDate        = '8/15/2017';
-                $cutDateParts   = explode( '/', $cutDate );
-                $cutMonth       = $cutDateParts[ 0 ];
-                $cutDay         = $cutDateParts[ 1 ];
+                $cutDateStart       = '6/15/2017';
+                $cutDateEnd         = '10/15/2017';
+                $cutDateStartParts  = explode( '/', $cutDateStart );
+                $cutDateEndParts    = explode( '/', $cutDateEnd );
+                $cutMonthStart      = $cutDateStartParts[ 0 ];
+                $cutDayStart        = $cutDateStartParts[ 1 ];
+                $cutMonthEnd        = $cutDateEndParts[ 0 ];
+                $cutDayEnd          = $cutDateEndParts[ 1 ];
 
-                $firstCutDate = mktime( 0, 0, 0, $cutMonth, $cutDay, $setting_first_year );
-                $lastCutDate = mktime( 0, 0, 0, $cutMonth, $cutDay, $setting_last_year );
+                $firstCutDate = mktime( 0, 0, 0, $cutMonthStart, $cutDayStart, $setting_first_year );
+                $lastCutDate = mktime( 0, 0, 0, $cutMonthEnd, $cutDayEnd, $setting_last_year );
 
                 $meetings = array();
                 $query_meetings = new WP_Query( $args );
