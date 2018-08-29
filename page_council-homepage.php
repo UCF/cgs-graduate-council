@@ -182,7 +182,7 @@ $page_meta_settings = array();
                 $setting_first_year = $setting_current_years[ 0 ];
                 $setting_last_year  = $setting_current_years[ 1 ];
 
-                $cutDateStart       = '6/15/2017';
+                $cutDateStart       = '8/15/2017';
                 $cutDateEnd         = '10/15/2017';
                 $cutDateStartParts  = explode( '/', $cutDateStart );
                 $cutDateEndParts    = explode( '/', $cutDateEnd );
