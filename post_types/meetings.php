@@ -129,17 +129,20 @@ namespace meetings_type{
         function plugin_save_post($id, $post) {
             if ($post->post_type == 'gs_meetings') {
                 $council = save_field( $id, 'council', 'council');
+
                 // Wordpress 5.0 changed the date-picker-ui to a new format m/d/Y => "Weekday NiceMonth Day Year".
                 $date = trim( $_POST['date'] );
                 $oldDateFormat = date( 'm/d/Y', strtotime( $date ) );
+
+                $deadlineDate = trim( $_POST['deadline'] );
+                $oldDeadlineDateFormat = date( 'm/d/Y', strtotime( $deadlineDate ) );
+
                 update_post_meta( $id, 'date', $oldDateFormat );
-
-
                 save_field( $id, 'hour', 'hour');
                 save_field( $id, 'minutes', 'minutes');
                 save_field( $id, 'meridiem', 'meridiem');
                 save_field( $id, 'location', 'location');
-                save_field( $id, 'deadline', 'deadline');
+                update_post_meta( $id, 'deadline', $oldDeadlineDateFormat );
                 save_field( $id, 'minutes_id', 'minutes_id');
                 save_field( $id, 'agenda_id', 'agenda_id');
 
