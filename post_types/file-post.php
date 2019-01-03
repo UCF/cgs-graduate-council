@@ -117,7 +117,11 @@ namespace file_post_type{
                 save_field( $id, 'committee', 'committee');
                 save_field( $id, 'document-type', 'document-type');
                 save_field( $id, 'year', 'year');
-                save_field( $id, 'date', 'date');
+				
+				// Wordpress 5.0 changed the date-picker-ui to a new format m/d/Y => "Weekday NiceMonth Day Year".
+				$date = trim( $_POST['date'] );
+                $oldDateFormat = date( 'm/d/Y', strtotime( $date ) );
+                update_post_meta( $id, 'date', $oldDateFormat );
             }
         }
         function plugin_display_details_meta_box($post) {
