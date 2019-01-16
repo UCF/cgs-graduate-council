@@ -119,9 +119,10 @@ namespace file_post_type{
                 save_field( $id, 'year', 'year');
 				
 				// Wordpress 5.0 changed the date-picker-ui to a new format m/d/Y => "Weekday NiceMonth Day Year".
-				$date = trim( $_POST['date'] );
-                $oldDateFormat = date( 'm/d/Y', strtotime( $date ) );
-                update_post_meta( $id, 'date', $oldDateFormat );
+				$date = trim( $_POST['date'] ); // Its important to note that trim returns '' when trimming an unset argument.
+				if( ! empty( $date ) ) 
+					$date = date( 'm/d/Y', strtotime( $date ) );
+                update_post_meta( $id, 'date', $date );
             }
         }
         function plugin_display_details_meta_box($post) {
