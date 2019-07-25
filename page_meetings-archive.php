@@ -23,8 +23,9 @@ get_header(); ?>
         $select_years = $setting_current_year;
 
         $matches = array();
-        if( ISSET( $_GET['years'] ) && preg_match('/\d+-\d+/', $_GET['years'], $matches ) )
-            $select_years = $_GET['years'];
+        if( ISSET( $_GET['years'] ) && 1 == preg_match('/^\d+-\d+$/', $_GET['years'], $matches ) ) {
+            $select_years = esc_html( $_GET['years'] );
+		}
 
 
         function getFileUrl( $gs_file_id ) {
