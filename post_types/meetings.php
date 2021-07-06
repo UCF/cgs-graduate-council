@@ -289,34 +289,34 @@ namespace meetings_type{
                 $current_ID = 0;
 
             $file_posting = $wpdb->get_results(
-                "SELECT ID, post_title FROM wordpress_posts as post " .
-                "LEFT JOIN wordpress_postmeta as meta " .
+                "SELECT ID, post_title FROM " . $wpdb->prefix . "posts as post " .
+                "LEFT JOIN " . $wpdb->prefix . "postmeta as meta " .
                 "   ON post.ID = meta.post_id ".
                 "WHERE 	post.post_type LIKE '%file%' " .
                 "   AND meta.meta_key = 'document-type' ".
                 "   AND meta.meta_value = '$file_type' ".
                 "   AND post.post_status = 'publish' " .
                 "   AND post.ID IN ( " .
-                "       -- LIST OF ALL FILE POST IDS IN A COUNCIL \n".
-                "       SELECT p.ID FROM wordpress_posts as p " .
-                "       JOIN wordpress_postmeta as m ".
-                "           ON p.ID = m.post_id ".
-                "       WHERE p.post_type LIKE '%file%' ".
-                "       AND p.post_status = 'publish' ".
-                "       AND m.meta_key = 'committee' ".
-                "       AND m.meta_value = '$council' ".
+                "       -- LIST OF ALL FILE POST IDS IN A COUNCIL \n" .
+                "       SELECT p.ID FROM " . $wpdb->prefix . "posts as p " .
+                "       JOIN " . $wpdb->prefix . "postmeta as m " .
+                "           ON p.ID = m.post_id " .
+                "       WHERE p.post_type LIKE '%file%' " .
+                "       AND p.post_status = 'publish' " .
+                "       AND m.meta_key = 'committee' " .
+                "       AND m.meta_value = '$council' " .
                 "   ) " .
                 "   AND ( post.ID NOT IN ( " .
-                "       -- LIST OF USED IDs \n".
-                "       SELECT m.meta_value FROM wordpress_posts as p " .
-                "       JOIN wordpress_postmeta as m ".
-                "           ON p.ID = m.post_id ".
-                "       WHERE p.post_type LIKE '%meeting%' ".
-                "       AND p.post_status = 'publish' ".
-                "       AND m.meta_key = '$type' ".
-                "       AND m.meta_value != '' ".
-                " ) ".
-                " OR post.ID IN ( $current_ID ) ". // The currently selected file is used by this post so include the ID too
+                "       -- LIST OF USED IDs \n" .
+                "       SELECT m.meta_value FROM " . $wpdb->prefix . "posts as p " .
+                "       JOIN " . $wpdb->prefix . "postmeta as m " .
+                "           ON p.ID = m.post_id " .
+                "       WHERE p.post_type LIKE '%meeting%' " .
+                "       AND p.post_status = 'publish' " .
+                "       AND m.meta_key = '$type' " .
+                "       AND m.meta_value != '' " .
+                " ) " .
+                " OR post.ID IN ( $current_ID ) " . // The currently selected file is used by this post so include the ID too
                 " ) "
             );
 
