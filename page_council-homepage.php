@@ -132,9 +132,63 @@ $page_meta_settings = array();
             </div>
             <?php
         endwhile;
-        wp_reset_query();
+        wp_reset_query(); ?>
+        <div class="content-tile">
+        <?php if( have_rows('topic_tracker') ):
+            while( have_rows('topic_tracker') ): the_row();
+            ?>
+                <div style="float: right">
+                    <?php
+                    $text_btn_policy_feedback = get_field("text_btn_policy_feedback");
+                    $text_btn_policy_subscription = get_field("text_btn_policy_subscription");
 
+                    if( ! $text_btn_policy_feedback ) { $text_btn_policy_feedback = "Policy Feedback"; }
+                    if( ! $text_btn_policy_subscription ) { $text_btn_policy_subscription = "Policy Updates Subscription"; }
+                    ?>
+                    <?php if(get_field("qualtrics_url")): ?>
+                        <a href="<?= get_field("qualtrics_url") ?>" class="btn btn-primary"><?= $text_btn_policy_feedback ?></a>
+                    <?php endif; ?>
+                    <?php if(get_field("email_subscription_url")): ?>
+                        <a href="<?= get_field("email_subscription_url") ?>" class="btn btn-primary"><?= $text_btn_policy_subscription ?></a>
+                    <?php endif; ?>
+                </div>
+                <h2><?php the_sub_field('topic_tracker_section_name'); ?></h2>
+                <?php if( have_rows('topic_tracker_repeater') ): ?>
+                    <table class="table table-striped">
+                        <thead class="">
+                        <tr>
+                            <th scope="col">Topic</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Last Updated</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                    <?php while( have_rows('topic_tracker_repeater') ): the_row();
+
+                        $topic_name = get_sub_field('topic_name');
+                        $topic_file_url = get_sub_field('file');
+                        $topic_status = get_sub_field('status');
+                        $topic_last_updated = get_sub_field('last_updated');
+
+                    ?>
+                        <tr>
+                            <td>
+                                <?php if( $topic_file_url ): ?>
+                                    <a href="<?= $topic_file_url ?>" class="text-secondary"><?= $topic_name ?></a>
+                                <?php else: ?>
+                                    <?= $topic_name ?>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= $topic_status ?></td>
+                            <td><?= $topic_last_updated ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                    </tbody></table>
+                <?php endif;
+            endwhile;
+        endif;
         ?>
+        </div>
         <div class="content-tile">
             <?php
             $args = array(
@@ -271,6 +325,8 @@ $page_meta_settings = array();
                 ?>
                 </tbody>
             </table>
+
+            <?php the_field('after_meeting_schedule'); ?>
 
             <div style="float: right; padding-top: 15px;">
                 <a style="font-size: 16px;" href="/<?php echo $setting_membersArchiveSlug; ?>">Previous Members</a>
