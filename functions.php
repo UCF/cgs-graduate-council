@@ -446,3 +446,36 @@ add_action('acf/init', function(){
 
 // Uncomment to allow new custom slug urls
 //flush_rewrite_rules();
+
+/**
+ * Automatically set post title to policy name where action is added
+ *
+ * @since Graduate Council 1.9
+ */
+function gc_policy_update_post_title($post_id) {
+	// If this is just a revision, don't update the title yet.
+	// if ( wp_is_post_revision( $post_id ) ) {
+	// 		return;
+	// }	
+
+	// unhook this function so it doesn't loop infinitely
+	remove_action('save_post', 'gc_policy_update_post_title');
+
+	$policy_name = get_post_meta( $post_id, 'policy-name', true );
+	$post_title = get_the_title( $post_id );
+	// Check if the meta for given key exists and title isn't set, then update the title
+	if($policy_name && '' == $post_title) {
+			$slug = sanitize_text_field(str_replace(' ', '-', strtolower($policy_name)));
+			$post_update = array(
+					'ID'					=> $post_id,
+					'post_title'	=> $policy_name,
+					'post_name'		=> $slug
+			);
+
+			wp_update_post( $post_update );
+	}
+	// restore hook
+	add_action('save_post', 'gc_policy_update_post_title');
+}
+add_action('save_post', 'gc_policy_update_post_title');
+

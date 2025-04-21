@@ -12,6 +12,12 @@ $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
 $title = '';
 $setting_committee = '';
 $page_meta_settings = array();
+static $policy_status = array(
+    'public_comment' => 'Public Comment',
+    'under_review' => 'Under Review',
+    'approved' => 'Approved',
+    'rejected' => 'Not Approved'
+)
 
 ?>
 <div id="primary" class="content-area">
@@ -132,45 +138,80 @@ $page_meta_settings = array();
             </div>
             <?php
         endwhile;
-        wp_reset_query(); ?>
+        wp_reset_query();
+
+        ?>
         <div class="content-tile">
         <?php if( have_rows('topic_tracker') ):
             while( have_rows('topic_tracker') ): the_row();
             ?>
                 <div style="float: right">
                     <?php
+                    $qualtrics_url = get_field("qualtrics_url");
                     $text_btn_policy_feedback = get_field("text_btn_policy_feedback");
                     $text_btn_policy_subscription = get_field("text_btn_policy_subscription");
 
                     if( ! $text_btn_policy_feedback ) { $text_btn_policy_feedback = "Policy Feedback"; }
                     if( ! $text_btn_policy_subscription ) { $text_btn_policy_subscription = "Policy Updates Subscription"; }
-                    ?>
-                    <?php if(get_field("qualtrics_url")): ?>
-                        <a href="<?= get_field("qualtrics_url") ?>" class="btn btn-primary"><?= $text_btn_policy_feedback ?></a>
-                    <?php endif; ?>
-                    <?php if(get_field("email_subscription_url")): ?>
+
+                    if(get_field("email_subscription_url")): ?>
                         <a href="<?= get_field("email_subscription_url") ?>" class="btn btn-primary"><?= $text_btn_policy_subscription ?></a>
                     <?php endif; ?>
                 </div>
                 <h2><?php the_sub_field('topic_tracker_section_name'); ?></h2>
-                <?php if( have_rows('topic_tracker_repeater') ): ?>
+                <?php 
+                // Get all policy file posts for the current academic year that have the following status:
+                //      1) Public Comment
+                //      2) Under Review
+                $args = array(
+                    'post_type' => 'gs_file',
+                    'posts_per_page' => -1,
+                    'post_status ' => 'published',
+                    'meta_query' => array(
+                        'relation' => 'AND',
+                        array(
+                        'key' => 'year',
+                        'value' => $setting_current_year,
+                        'compare' => '=',
+                        ),
+                        array(
+                        'key' => 'document-type',
+                        'value' => 'policies',
+                        'compare' => '=',
+                        ),
+                        'policy_clause' => array(
+                        'key' => 'policy-status',
+                        'value' => array( $policy_status['public_comment'], $policy_status['under_review'] ),
+                        'compare' => 'IN',
+                        ),
+                    ),
+                    'order' => 'DESC',
+                    'orderby' => array( 'meta_value' => 'DESC', 'policy_clause' => 'ASC', 'title' => 'ASC' ),
+                    'meta_type' => 'DATE',
+                    'meta_key' => 'date'
+                );
+
+                $query_policy_files = new WP_Query($args);
+                if( $query_policy_files->have_posts() ): ?>
                     <table class="table table-striped">
                         <thead class="">
                         <tr>
-                            <th scope="col">Topic</th>
+                            <th scope="col">Policy</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Last Updated</th>
+                            <th scope="col">Effective Date</th>
+                            <th scope="col">Policy Feedback</th>
                         </tr>
                         </thead>
                         <tbody>
-                    <?php while( have_rows('topic_tracker_repeater') ): the_row();
+                        <?php while( $query_policy_files->have_posts() ):
+                            $query_policy_files->the_post();
+                            $meta = get_post_meta( $post->ID );
+                            $topic_name = esc_html( (( !empty( $meta['policy-name']  ) )? $meta['policy-name'][0]  : '') );
+                            $topic_file_url = esc_html( (( !empty( $meta['file_url']  ) )? $meta['file_url'][0]  : '') );
+                            $topic_status = esc_html( (( !empty( $meta['policy-status']  ) )? $meta['policy-status'][0]  : '') );
+                            $topic_last_updated = esc_html( (( !empty( $meta['date']  ) )? $meta['date'][0]  : '') );
 
-                        $topic_name = get_sub_field('topic_name');
-                        $topic_file_url = get_sub_field('file');
-                        $topic_status = get_sub_field('status');
-                        $topic_last_updated = get_sub_field('last_updated');
-
-                    ?>
+                        ?>
                         <tr>
                             <td>
                                 <?php if( $topic_file_url ): ?>
@@ -181,10 +222,160 @@ $page_meta_settings = array();
                             </td>
                             <td><?= $topic_status ?></td>
                             <td><?= $topic_last_updated ?></td>
+                            <td style="text-align: center">
+                                <?php if($qualtrics_url && $topic_name && $policy_status['public_comment'] == $topic_status): ?>
+                                    <a href="<?= $qualtrics_url . "?Policy=" . sanitize_title($topic_name) ?>" class="btn btn-primary" style="width: 100%"><?= $text_btn_policy_feedback ?></a>
+                                <?php endif; ?>
+                            </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endwhile; /* status == 'public_comment' or 'under_review' */?>
                     </tbody></table>
-                <?php endif;
+                <?php endif; wp_reset_query();
+                $text_btn_graduate_catalog = get_field("text_btn_graduate_catalog");
+                if (!$text_btn_graduate_catalog) $text_btn_graduate_catalog = 'See in Graduate Catalog';
+
+                // Get all policy file posts for the current academic year that have the following status:
+                //      1) Approved
+                $args = array(
+                    'post_type' => 'gs_file',
+                    'posts_per_page' => -1,
+                    'post_status ' => 'published',
+                    'meta_query' => array(
+                        'relation' => 'AND',
+                        array(
+                        'key' => 'year',
+                        'value' => $setting_current_year,
+                        'compare' => '=',
+                        ),
+                        array(
+                        'key' => 'document-type',
+                        'value' => 'policies',
+                        'compare' => '=',
+                        ),
+                        array(
+                        'key' => 'policy-status',
+                        'value' => array( $policy_status['approved'] ),
+                        'compare' => 'IN',
+                        ),
+                    ),
+                    'order' => 'DESC',
+                    'orderby' => array( 'meta_value' => 'DESC', 'title' => 'ASC' ),
+                    'meta_type' => 'DATE',
+                    'meta_key' => 'date'
+                );
+
+                $query_policy_files->query($args);
+                if( $query_policy_files->have_posts() ): ?>
+                    <h2><?php the_sub_field('topic_tracker_section_name_approved'); ?></h2>
+                    <table class="table table-striped">
+                        <thead class="">
+                        <tr>
+                            <th scope="col">Policy</th>
+                            <th scope="col">Effective Date</th>
+                            <th scope="col">Updated Policy Link</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                    <?php while( $query_policy_files->have_posts() ):
+                        $query_policy_files->the_post();
+                        $meta = get_post_meta( $post->ID );
+                        $topic_name = esc_html( (( !empty( $meta['policy-name']  ) )? $meta['policy-name'][0]  : '') );
+                        $topic_file_url = esc_html( (( !empty( $meta['file_url']  ) )? $meta['file_url'][0]  : '') );
+                        $topic_status = esc_html( (( !empty( $meta['policy-status']  ) )? $meta['policy-status'][0]  : '') );
+                        $topic_last_updated = esc_html( (( !empty( $meta['date']  ) )? $meta['date'][0]  : '') );
+                        $topic_graduate_catalog_url = esc_html( (( !empty( $meta['policy-url-in-catalog']  ) )? $meta['policy-url-in-catalog'][0]  : '') );
+
+                    ?>
+                        <tr>
+                            <td>
+                                <?php if( $topic_file_url ): ?>
+                                    <a href="<?= $topic_file_url ?>" class="text-secondary"><?= $topic_name ?></a>
+                                <?php else: ?>
+                                    <?= $topic_name ?>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= $topic_last_updated ?></td>
+                            <td style="text-align: center">
+                                <?php if($topic_graduate_catalog_url): ?>
+                                    <a href="<?= $topic_graduate_catalog_url ?>" class="btn btn-primary" style="width: 100%"><?= $text_btn_graduate_catalog ?></a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endwhile; /* status == 'approved' */ ?>
+                    </tbody></table>
+                <?php endif; wp_reset_query();
+
+                // Get all policy file posts for the current academic year that have the following status:
+                //      1) Not Approved
+                $args = array(
+                    'post_type' => 'gs_file',
+                    'posts_per_page' => -1,
+                    'post_status ' => 'published',
+                    'meta_query' => array(
+                        'relation' => 'AND',
+                        array(
+                        'key' => 'year',
+                        'value' => $setting_current_year,
+                        'compare' => '=',
+                        ),
+                        array(
+                        'key' => 'document-type',
+                        'value' => 'policies',
+                        'compare' => '=',
+                        ),
+                        array(
+                        'key' => 'policy-status',
+                        'value' => array( $policy_status['rejected'] ),
+                        'compare' => 'IN',
+                        ),
+                    ),
+                    'order' => 'DESC',
+                    'orderby' => array( 'meta_value' => 'DESC', 'title' => 'ASC' ),
+                    'meta_type' => 'DATE',
+                    'meta_key' => 'date'
+                );
+
+                $query_policy_files->query($args);
+                if( $query_policy_files->have_posts() ): ?>
+                    <h2><?php the_sub_field('topic_tracker_section_name_not_approved'); ?></h2>
+                    <table class="table table-striped">
+                        <thead class="">
+                        <tr>
+                            <th scope="col">Policy</th>
+                            <th scope="col">Effective Date</th>
+                            <th scope="col">Existing Policy Link*</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                    <?php while( $query_policy_files->have_posts() ):
+                        $query_policy_files->the_post();
+                        $meta = get_post_meta( $post->ID );
+                        $topic_name = esc_html( (( !empty( $meta['policy-name']  ) )? $meta['policy-name'][0]  : '') );
+                        $topic_file_url = esc_html( (( !empty( $meta['file_url']  ) )? $meta['file_url'][0]  : '') );
+                        $topic_status = esc_html( (( !empty( $meta['policy-status']  ) )? $meta['policy-status'][0]  : '') );
+                        $topic_last_updated = esc_html( (( !empty( $meta['date']  ) )? $meta['date'][0]  : '') );
+                        $topic_graduate_catalog_url = esc_html( (( !empty( $meta['policy-url-in-catalog']  ) )? $meta['policy-url-in-catalog'][0]  : '') );
+
+                    ?>
+                        <tr>
+                            <td>
+                                <?php if( $topic_file_url ): ?>
+                                    <a href="<?= $topic_file_url ?>" class="text-secondary"><?= $topic_name ?></a>
+                                <?php else: ?>
+                                    <?= $topic_name ?>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= $topic_last_updated ?></td>
+                            <td style="text-align: center">
+                                <?php if($topic_graduate_catalog_url): ?>
+                                    <a href="<?= $topic_graduate_catalog_url ?>" class="btn btn-primary" style="width: 100%"><?= $text_btn_graduate_catalog ?></a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endwhile; /* status == 'rejected' */ ?>
+                    </tbody></table>
+                    <p>* - <i>Existing Policy Link</i> will navigate to original policy.</p>
+                <?php endif; wp_reset_query();
             endwhile;
         endif;
         ?>

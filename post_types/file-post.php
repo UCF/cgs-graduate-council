@@ -5,8 +5,7 @@ namespace {
 }
 
 namespace file_post_type{
-
-
+    
     if (!function_exists('file_post_type\file_post_setup')) {
         add_action('wp_enqueue_scripts', 'file_post_type\plugin_scripts', 0); // action, array, priority ( 0 lowest, 10 normal, 10+ higher)
         add_action('init', 'file_post_type\new_post_type_file_posting');
@@ -89,6 +88,9 @@ namespace file_post_type{
             $data['document-type']  = esc_html( (( !empty( $meta['document-type']  ) )? $meta['document-type'][0]  : '') );
             $data['year']           = esc_html( (( !empty( $meta['year']  ) )? $meta['year'][0]  : '') );
             $data['date']           = esc_html( (( !empty( $meta['date']  ) )? $meta['date'][0]  : '') );
+            $data['policy-name']    = esc_html( (( !empty( $meta['policy-name']  ) )? $meta['policy-name'][0]  : '') );
+            $data['policy-status']  = esc_html( (( !empty( $meta['policy-status']  ) )? $meta['policy-status'][0]  : '') );
+            $data['policy-url-in-catalog']  = esc_html( (( !empty( $meta['policy-url-in-catalog']  ) )? $meta['policy-url-in-catalog'][0]  : '') );
 
             return $data;
         }
@@ -117,6 +119,9 @@ namespace file_post_type{
                 save_field( $id, 'committee', 'committee');
                 save_field( $id, 'document-type', 'document-type');
                 save_field( $id, 'year', 'year');
+                save_field( $id, 'policy-name', 'policy-name');
+                save_field( $id, 'policy-status', 'policy-status');
+                save_field( $id, 'policy-url-in-catalog', 'policy-url-in-catalog');
 				
 				// Wordpress 5.0 changed the date-picker-ui to a new format m/d/Y => "Weekday NiceMonth Day Year".
 				$date = trim( $_POST['date'] ); // Its important to note that trim returns '' when trimming an unset argument.
@@ -126,16 +131,68 @@ namespace file_post_type{
             }
         }
         function plugin_display_details_meta_box($post) {
+            $policy_status = array(
+                'public_comment' => 'Public Comment',
+                'under_review' => 'Under Review',
+                'approved' => 'Approved',
+                'rejected' => 'Not Approved'
+            );
+            
             $data = file_data( $post->ID );
             $setting_years = trim( esc_attr( get_option( 'years' ) ) );
             $setting_years = explode( ',', $setting_years );
             ?>
             <style>
-                table.file-posting th {
+                #policy-attributes {
+                    padding: 5px 10px 5px 20px;
+                    border: 2px solid black;
+                    border-radius: 5px;
+                    margin: 5px auto;
+                    transition: all 1s ease-in-out;
+                }
+                table.file-posting th, #policy-attributes th.file-posting  {
                     text-align: right;
                     width: 1%;
                     white-space: nowrap;
                     padding: 0 10px 0 20px;
+                }
+
+                .policy-attributes-hidden{
+                    visibility: hidden;
+                    opacity: 0;
+                    max-height: 0px;
+                    transform: translate3(0,-200px,-100px);
+                }
+
+                .policy-attributes-visible{
+                    visibility: visible;
+                    opacity: 1;
+                    max-height: 500px;
+                    transform: translate3d(0,0,0);
+                }
+
+                .date-label-out {
+                    transform: translate3d(-100px,0,0);
+                    opacity: 0;
+                }
+
+                .date-label-in {
+                    transform: translate3d(0,0,0);
+                    opacity: 1;
+                }
+
+                .date-label-in, .date-label-out {
+                    transition: 1s ease-in-out;
+                    text-align: right;
+                }
+
+                .date-label-container {
+                    display: inline-grid;
+                }
+
+                .date-label-out, .date-label-in{
+                    grid-column: 1;
+                    grid-row: 1;
                 }
             </style>
             <div>
@@ -166,20 +223,49 @@ namespace file_post_type{
                         </td>
                     </tr>
                     <tr>
-                        <th><label for="date">Date:</label></th>
+                        <th><label id="date-label" for="date">
+                            <div class="date-label-container">
+                                <div class="<?php if( $data['document-type'] != 'policies' ) echo "date-label-in"; else echo "date-label-out"; ?> date-label">Date:</div>
+                                <div class="<?php if( 'policies' == $data['document-type'] ) echo "date-label-in"; else echo "date-label-out"; ?> effective-date-label">Effective Date:</div>
+                            </div>
+                        </label></th>
                         <td>
                             <input style="width: 100%" type="text" name="date" id="date" value="<?php echo $data['date'] ?>"/>
                         </td>
                         <th><label for="document-type">Document Type:</label></th>
                         <td>
-                            <select name="document-type">
+                            <select name="document-type" onchange="handleDocumentTypeChange(this)">
                                 <option></option>
                                 <option value="agenda" <?php if( $data['document-type'] == 'agenda' ) echo "selected"; ?>>Agenda</option>
                                 <option value="minutes" <?php if( $data['document-type'] == 'minutes' ) echo "selected"; ?>>Minutes</option>
                                 <option value="reports" <?php if( $data['document-type'] == 'reports' ) echo "selected"; ?>>Reports</option>
                                 <option value="forms" <?php if( $data['document-type'] == 'forms' ) echo "selected"; ?>>Forms and Files</option>
-                                <option value="polices" <?php if( $data['document-type'] == 'polices' ) echo "selected"; ?>>Approved Policies</option>
+                                <option value="policies" <?php if( $data['document-type'] == 'policies' ) echo "selected"; ?>>Policies</option>
                             </select>
+                        </td>
+                    </tr>
+                </table>
+                <table id="policy-attributes" class="<?php if( 'policies' == $data['document-type'] ) echo "policy-attributes-visible"; else echo "policy-attributes-hidden"; ?>" <?php if( 'policies' != $data['document-type'] ) echo " style=\"position: absolute;\""; ?>width="100%">
+                    <tr>
+                        <th><label for="policy-name">Policy:</label></th>
+                        <td>
+                            <input style="width: 100%" type="text" name="policy-name" id="policy-name" value="<?php echo $data['policy-name'] ?>"/>
+                        </td>
+                        <th><label for="policy-status">Status:<?php ; ?></label></th>
+                        <td>
+                            <select name="policy-status">
+                                <option></option>
+                                <option value="<?= $policy_status['public_comment'] ?>" <?php if( $data['policy-status'] == $policy_status['public_comment'] ) echo "selected"; ?>><?= $policy_status['public_comment'] ?></option>
+                                <option value="<?= $policy_status['under_review'] ?>" <?php if( $data['policy-status'] == $policy_status['under_review'] ) echo "selected"; ?>><?= $policy_status['under_review'] ?></option>
+                                <option value="<?= $policy_status['approved'] ?>" <?php if( $data['policy-status'] == $policy_status['approved'] ) echo "selected"; ?>><?= $policy_status['approved'] ?></option>
+                                <option value="<?= $policy_status['rejected'] ?>" <?php if( $data['policy-status'] == $policy_status['rejected'] ) echo "selected"; ?>><?= $policy_status['rejected'] ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="file-posting" ><label for="policy-url-in-catalog">Link to Policy in Graduate Catalog:</label></th>
+                        <td width="70%">
+                            <input style="width: 100%" type="text" name="policy-url-in-catalog" id="policy-url-in-catalog" value="<?php echo $data['policy-url-in-catalog'] ?>"/>
                         </td>
                     </tr>
                 </table>
@@ -201,6 +287,30 @@ namespace file_post_type{
                         field: document.getElementById('date'),
                         format: 'L'
                     });
+                    addEventListener("transitionend", (event) => {});
+                    ontransitionend = (event) => {};
+                    function handleDocumentTypeChange(e) {
+                        $policy_table = document.getElementById('policy-attributes');
+                        $startOutElement = document.getElementsByClassName('date-label-out')[0];
+                        $startInElement = document.getElementsByClassName('date-label-in')[0];
+                        $isCurrentPoliciesType = $startInElement?.classList.contains('effective-date-label');
+                        if(('policies' == e?.value && !$isCurrentPoliciesType) || ('policies' != e?.value && $isCurrentPoliciesType)) {
+                            $startOutElement?.classList.toggle('date-label-out');
+                            $startOutElement?.classList.toggle('date-label-in');
+                            $startInElement?.classList.toggle('date-label-out');
+                            $startInElement?.classList.toggle('date-label-in');
+                            $policy_table?.classList.toggle("policy-attributes-hidden");
+                            $policy_table?.classList.toggle("policy-attributes-visible");
+                            if ($isCurrentPoliciesType) {
+                                document.getElementById('policy-attributes').ontransitionend = () => {
+                                    document.getElementById('policy-attributes').style["position"] = "absolute";
+                                };
+                            } else {
+                                document.getElementById('policy-attributes').style["position"] = "unset";
+                                document.getElementById('policy-attributes').ontransitionend = () => {};
+                            }
+                        }
+                    }
                 </script>
             </div>
         <?php
@@ -257,7 +367,7 @@ namespace file_post_type{
                     <option value="minutes" <?php if( $documentType == 'minutes' ) echo "selected"; ?>>Minutes</option>
                     <option value="forms" <?php if( $documentType == 'forms' ) echo "selected"; ?>>Forms and Files</option>
                     <option value="reports" <?php if( $documentType == 'reports' ) echo "selected"; ?>>Reports</option>
-                    <option value="polices" <?php if( $documentType == 'polices' ) echo "selected"; ?>>Approved Polices</option>
+                    <option value="policies" <?php if( $documentType == 'policies' ) echo "selected"; ?>>Policies</option>
                 </select>
                 <label for="committee">Committee:</label>
                 <select id="committee" name="committee">

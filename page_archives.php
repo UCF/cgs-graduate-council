@@ -71,8 +71,8 @@ get_header(); ?>
                 <h3><span>Document Type</span></h3>
                 <ul id="documents_holder" class="list-no-bullet">
                     <?php
-                    $documentTypes = array( 'Agenda', 'Approved Policies', 'Minutes', 'Forms and Files', 'Reports' );
-                    $documentTypes_values = array( 'agenda', 'polices', 'minutes', 'forms', 'reports' );
+                    $documentTypes = array( 'Agenda', 'Policies', 'Minutes', 'Forms and Files', 'Reports' );
+                    $documentTypes_values = array( 'agenda', 'policies', 'minutes', 'forms', 'reports' );
                     for( $i = 0, $l = count( $documentTypes ); $i < $l; $i++ ) { ?>
                         <li>
                             <label class="archive-filter" id="documentType-<?php echo $documentTypes_values[ $i ]; ?>">
@@ -138,6 +138,7 @@ get_header(); ?>
                             'committee'     => $meta[ 'committee' ][ 0 ],
                             'document-type' => $meta[ 'document-type' ][ 0 ],
                             'year'          => $meta[ 'year' ][ 0 ],
+                            'policy-status' => $meta[ 'policy-status' ][ 0 ],
                         ));
 
                     endwhile;
@@ -240,7 +241,7 @@ get_header(); ?>
                     var displayFileType = {
                         'agenda': 'Agenda',
                         'minutes': 'Minutes',
-                        'polices': 'Approved Policies',
+                        'policies': 'Policies',
                         'forms': 'Forms and Files',
                         'reports': 'Reports'
                     };
@@ -253,6 +254,7 @@ get_header(); ?>
                         var file = files[ i ];
 
 						var filter_type = displayFileType[ file['document-type'] ];
+                        if ( file['policy-status'] && 'Policies' == filter_type ) filter_type = file['policy-status'] + ' Policy';
 						var program_type = programCodeToProgram[ file.committee ];
 						
                         r += "<tr>";
