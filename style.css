@@ -1,10 +1,10 @@
 /*
 Theme Name: Graduate Council
-Theme URI: https://graduate.ucf.edu/
+Theme URI: https://graduatecouncil.ucf.edu/
 Author: Graduate Studies IT
 Author URI: https://wordpress.org/
 Description: UCF Graduate Council Theme
-Version: 1.9
+Version: 1.10
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: one-column, two-columns, right-sidebar, accessibility-ready, custom-background, custom-colors, custom-header, custom-menu, editor-style, featured-images, flexible-header, microformats, post-formats, rtl-language-support, sticky-post, threaded-comments, translation-ready, blog
@@ -48,6 +48,7 @@ Use it to make something cool, have fun, and share what you've learned with othe
  *    14.4 - >= 985px
  *    14.5 - >= 1200px
  * 15.0 - Print
+ * 16.0 - Graduate Studies Styles
  */
 
 
@@ -2800,9 +2801,9 @@ p > video {
 		bottom: 0;
 	}
 */
-	.site {
+	/*.site {
 		//margin: 21px;
-	}
+	}*/
 
 	.site-main {
 		margin-bottom: 5.25em;
@@ -4022,7 +4023,7 @@ p > video {
 }
 
 /**
- * Graduate studies styles
+ * 16.0 - Graduate Studies Styles
  */
 
 body {
@@ -4163,13 +4164,13 @@ ul.memberSub li a:hover{
     font-size: 12px;
 }
 .footer-links ul li  {
-    //border-right: 1px solid white;
-    //display: inline-block;
+    /*border-right: 1px solid white;*/
+    /*display: inline-block;*/
     padding: 0;
 }
-.footer-links ul li:last-child  {
+/*.footer-links ul li:last-child  {
     //border: none;
-}
+}*/
 th.right {
     text-align: right;
 }

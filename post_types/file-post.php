@@ -194,6 +194,10 @@ namespace file_post_type{
                     grid-column: 1;
                     grid-row: 1;
                 }
+
+                #document_type_radio label {
+                    line-height: 2;
+                }
             </style>
             <div>
                 <table class="file-posting" width="100%">
@@ -315,7 +319,7 @@ namespace file_post_type{
             </div>
         <?php
         }
-        function plugin_scripts()
+function plugin_scripts()
         {
             if (!is_admin()) {
                 wp_deregister_script('jquery');
@@ -400,6 +404,79 @@ namespace file_post_type{
         add_action( 'draft_page', 'file_post_type\save_custom_post_meta' );
         add_action( 'future_page', 'file_post_type\save_custom_post_meta' );
         add_action( 'add_meta_boxes_page', 'file_post_type\add_page_settings_metabox' );
+
+
+		function remove_default_document_type_meta_box() {
+			remove_meta_box('tagsdiv-document-type', 'gs_file', 'side');
+		}
+		add_action('add_meta_boxes', 'file_post_type\remove_default_document_type_meta_box');
+
+
+		function add_document_type_radio_meta_box() {
+
+            global $wp_meta_boxes;
+
+            // Check if pageparentdiv is registered for gs_file in the side context
+            $has_pageparent = isset($wp_meta_boxes['gs_file']['side']['core']['pageparentdiv']);
+
+            // Remove/add default page-attributes meta box to ensure it appears after document types
+            if ($has_pageparent) remove_meta_box('pageparentdiv', 'gs_file', 'side');
+
+            // Why we're here
+			add_meta_box(
+				'document_type_radio',
+				'Document Type',
+				'file_post_type\document_type_radio_meta_box_callback',
+				'gs_file',
+				'side',
+				'core'
+			);
+
+            // Now bring back page-attributes
+            if ($has_pageparent) add_meta_box(
+                'pageparentdiv',
+                __('Page Attributes'),
+                'page_attributes_meta_box',
+                'gs_file',
+                'side',
+                'default'
+            );
+		}
+		add_action('add_meta_boxes', 'file_post_type\add_document_type_radio_meta_box');
+
+		function document_type_radio_meta_box_callback($post) {
+			$taxonomy = 'document-type';
+			$terms = get_terms([
+				'taxonomy' => $taxonomy,
+				'hide_empty' => false,
+			]);
+			$current_terms = wp_get_post_terms($post->ID, $taxonomy, ['fields' => 'ids']);
+
+            echo '<div>';
+			foreach ($terms as $term) {
+				echo '<label><input type="radio" name="document_type_term" value="' . esc_attr($term->term_id) . '" ' . checked(in_array($term->term_id, $current_terms), true, false) . '> ' . esc_html($term->name) . '</label><br>';
+			}
+            echo '<input type="text" name="new_document_type_term" placeholder="Add new document type" style="margin-top:10px;width:100%;" />';
+            echo '</div>';
+		}
+
+		function save_document_type_radio_selection($post_id) {
+			if (isset($_POST['document_type_term'])) {
+				$term_id = intval($_POST['document_type_term']);
+				wp_set_post_terms($post_id, [$term_id], 'document-type');
+			}
+            if (!empty($_POST['new_document_type_term'])) {
+                $new_term = sanitize_text_field($_POST['new_document_type_term']);
+                $term = term_exists($new_term, 'document-type');
+                if (!$term) {
+                    $term = wp_insert_term($new_term, 'document-type');
+                }
+                if (!is_wp_error($term)) {
+                    wp_set_post_terms($post_id, [$term['term_id']], 'document-type');
+                }
+            }
+		}
+		add_action('save_post', 'file_post_type\save_document_type_radio_selection');
 
     }
 }

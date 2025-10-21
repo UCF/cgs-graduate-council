@@ -7,6 +7,56 @@ exit;
 }
 
 namespace gs_settings {
+    function get_committees_tax() {
+        static $committees;
+        if (!$committees) {
+            $tax_args = array(
+                'taxonomy'   => 'committee',
+                'hide_empty' => false,
+                'orderby'    => 'name',
+            );
+            $committees = get_terms( $tax_args );
+        }
+        return $committees;
+    }
+
+    function get_years_tax() {
+        static $committee_years;
+        if (!$committee_years) {
+            $tax_args = array(
+                'taxonomy'   => 'committee-year',
+                'hide_empty' => false,
+                'orderby'    => 'name',
+                'order'      => 'DESC'
+            );
+            $committee_years = get_terms( $tax_args );
+        }
+        return $committee_years;
+    }
+
+    function add_year_to_taxonomy_sanitize($value) {
+        if (!empty($_POST['add_year_to_taxonomy'])) {
+            $new_term = sanitize_text_field($_POST['add_year_to_taxonomy']);
+            $taxonomy = 'committee-year';
+
+            // Check if term already exists
+            $existing = term_exists($new_term, $taxonomy);
+            if (!$existing) {
+                $result = wp_insert_term($new_term, $taxonomy);
+                if (!is_wp_error($result)) {
+                    return $result['term_id']; // Save the new term ID
+                }
+                else {
+                    error_log('Term insert error on taxonomy ' . $taxonomy . ': ' . $result->get_error_message());
+                }
+            } else {
+                return $existing['term_id']; // Save existing term ID
+            }
+        }
+
+        return $value; // Save selected term ID
+    }
+
     function settings_admin_menu()
     {
         add_options_page(
@@ -38,12 +88,28 @@ namespace gs_settings {
         //echo '<p>Intro text for our settings section</p>';
     }
 
-    function graduate_settings_current_year_render()
+    function graduate_settings_current_year_render($args)
     {
-        $setting_current_year = trim(esc_attr(get_option('current_year')));
-        echo "<input type='text' name='current_year' value='$setting_current_year' />";
+        if (!$args) {
+            $setting_current_year = trim(esc_attr(get_option('current_year')));
+            echo "<input type='text' name='current_year' value='$setting_current_year' />";
+        }
+        else {
+            $setting_current_year = trim(esc_attr(get_option('current_year_' . $args["term_id"])));
+            echo "<select name='current_year_" . $args["term_id"] . "' id='current_year_" . $args["term_id"] . "'>";
+            $tax_years = get_years_tax();
+            foreach ($tax_years as $year) {
+                echo '<option value="' . 'value-' . esc_attr($year->name) . '" ' . selected($setting_current_year, 'value-' . $year->name, false) . '>' . esc_html($year->name) . '</option>';
+            }
+            echo "</select>";
+        }
     }
-    function graduate_settings_years_render()
+
+    function graduate_settings_add_year_to_taxonomy_render() {
+        echo '<input type="text" name="add_year_to_taxonomy" id="add_year_to_taxonomy" value="" />';
+    }
+
+    /*    function graduate_settings_years_render()
     {
         $setting_years = trim(esc_attr(get_option('years')));
         ?>
@@ -324,14 +390,13 @@ namespace gs_settings {
             })("collegesControls");
         </script>
     <?php
-    }
+    } */
 
     function council_member_settings_init()
     {
-
         register_setting('graduate_council_site_settings', 'current_year');
-        register_setting('graduate_council_site_settings', 'years');
-        register_setting('graduate_council_site_settings', 'colleges');
+        // register_setting('graduate_council_site_settings', 'years');
+        // register_setting('graduate_council_site_settings', 'colleges');
 
 
         add_settings_section(
@@ -349,21 +414,44 @@ namespace gs_settings {
             'graduate_general_settings' // The section of the settings page in which to show the box (default or a section you added with add_settings_section(), look at the page in the source to see what the existing ones are.)
         );
 
+        register_setting('graduate_council_site_settings', 'add_year_to_taxonomy', array("sanitize_callback" => 'gs_settings\add_year_to_taxonomy_sanitize'));
+        $committees = get_committees_tax();
+
+        foreach($committees as $index => $committee) {
+            register_setting('graduate_council_site_settings', 'current_year_' . $committee->term_id);
+            add_settings_field(
+                'graduate_select_field_' . $index, // String for use in the 'id' attribute of tags.
+                'Current Year for ' . $committee->name . ' committee', // Title of the field.
+                'gs_settings\graduate_settings_current_year_render', // Function that fills the field with the desired inputs as part of the larger form. Passed a single argument, the $args array. Name and id of the input should match the $id given to this function. The function should echo its output.
+                'graduate_council_site_settings', // The menu page on which to display this field. Should match $menu_slug from add_theme_page() or from do_settings_sections().
+                'graduate_general_settings', // The section of the settings page in which to show the box (default or a section you added with add_settings_section(), look at the page in the source to see what the existing ones are.)
+                array("term_id" => $committee->term_id, "name" => $committee->name, "slug" => $committee->slug) // argument passed into callback function for rendering specific committee setting.
+            );
+        }
+
         add_settings_field(
             'graduate_text_field_1', // String for use in the 'id' attribute of tags.
-            'Years', // Title of the field.
-            'gs_settings\graduate_settings_years_render', // Function that fills the field with the desired inputs as part of the larger form. Passed a single argument, the $args array. Name and id of the input should match the $id given to this function. The function should echo its output.
+            'Add new year option', // Title of the field.
+            'gs_settings\graduate_settings_add_year_to_taxonomy_render', // Function that fills the field with the desired inputs as part of the larger form. Passed a single argument, the $args array. Name and id of the input should match the $id given to this function. The function should echo its output.
             'graduate_council_site_settings', // The menu page on which to display this field. Should match $menu_slug from add_theme_page() or from do_settings_sections().
             'graduate_general_settings' // The section of the settings page in which to show the box (default or a section you added with add_settings_section(), look at the page in the source to see what the existing ones are.)
         );
 
-        add_settings_field(
-            'graduate_text_field_2', // String for use in the 'id' attribute of tags.
-            'Colleges', // Title of the field.
-            'gs_settings\graduate_settings_college_render', // Function that fills the field with the desired inputs as part of the larger form. Passed a single argument, the $args array. Name and id of the input should match the $id given to this function. The function should echo its output.
-            'graduate_council_site_settings', // The menu page on which to display this field. Should match $menu_slug from add_theme_page() or from do_settings_sections().
-            'graduate_general_settings' // The section of the settings page in which to show the box (default or a section you added with add_settings_section(), look at the page in the source to see what the existing ones are.)
-        );
+        // add_settings_field(
+        //     'graduate_text_field_1', // String for use in the 'id' attribute of tags.
+        //     'Years', // Title of the field.
+        //     'gs_settings\graduate_settings_years_render', // Function that fills the field with the desired inputs as part of the larger form. Passed a single argument, the $args array. Name and id of the input should match the $id given to this function. The function should echo its output.
+        //     'graduate_council_site_settings', // The menu page on which to display this field. Should match $menu_slug from add_theme_page() or from do_settings_sections().
+        //     'graduate_general_settings' // The section of the settings page in which to show the box (default or a section you added with add_settings_section(), look at the page in the source to see what the existing ones are.)
+        // );
+
+        // add_settings_field(
+        //     'graduate_text_field_2', // String for use in the 'id' attribute of tags.
+        //     'Colleges', // Title of the field.
+        //     'gs_settings\graduate_settings_college_render', // Function that fills the field with the desired inputs as part of the larger form. Passed a single argument, the $args array. Name and id of the input should match the $id given to this function. The function should echo its output.
+        //     'graduate_council_site_settings', // The menu page on which to display this field. Should match $menu_slug from add_theme_page() or from do_settings_sections().
+        //     'graduate_general_settings' // The section of the settings page in which to show the box (default or a section you added with add_settings_section(), look at the page in the source to see what the existing ones are.)
+        // );
     }
 
     add_action('admin_init', 'gs_settings\council_member_settings_init');
