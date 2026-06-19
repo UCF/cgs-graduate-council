@@ -8,7 +8,7 @@
  */
 get_header(); ?>
 <div id="primary" class="content-area">
-    <main id="main" class="site-main" role="main">
+    <main id="main" class="site-main" role="main" tabindex="-1">
         <?php
         $title = '';
 
@@ -65,9 +65,9 @@ get_header(); ?>
                     ),
             );
             ?>
-            <h2 id="meetings"><?php echo $title; ?></h2>
+            <h1 id="meetings" class="archive-page-title"><?php echo $title; ?></h1>
             <div class="col-xs-3">
-                <h3><span>Year</span></h3>
+                <h2 class="archive-filter-heading"><span>Year</span></h2>
                 <ul class="list-no-bullet">
                 <?php
                     $years = explode( ',', $setting_years );
@@ -81,11 +81,6 @@ get_header(); ?>
                 </ul>
             </div>
             <?php
-
-            $colCount = 1;
-            if( !empty( $setting_hasSubmitDate ) )  $colCount++;
-            if( !empty( $setting_hasAgenda ) )      $colCount++;
-            if( !empty( $setting_hasMinutes ) )     $colCount++;
 
             $setting_current_years = explode( '-', $select_years );
 
@@ -135,22 +130,31 @@ get_header(); ?>
                     }
                 endwhile;
             endif;
+
+            $show_submit_date = !empty( $setting_hasSubmitDate ) && $select_years == $setting_current_year;
+            $show_agenda      = !empty( $setting_hasAgenda ) && $has_agenda;
+            $show_minutes     = !empty( $setting_hasMinutes ) && $has_minutes;
+
+            $colCount = 1;
+            if( $show_submit_date )  $colCount++;
+            if( $show_agenda )       $colCount++;
+            if( $show_minutes )      $colCount++;
             ?>
             <div class="col-xs-9">
                 <table class="meeting-table">
                     <thead>
                     <tr>
                         <?php
-                        echo '<th>Meeting Date and Time</th>';
+                        echo '<th scope="col">Meeting Date and Time</th>';
                         // Only display the “Submit Date” on the current year. There is no need to display this date on previous years.
-                        if( !empty($setting_hasSubmitDate) && $select_years == $setting_current_year )
-                            echo '<th>Submit Date</th>';
+                        if( $show_submit_date )
+                            echo '<th scope="col">Submit Date</th>';
                         // If a column heading has no data for a specific year, do not display the column.
-                        if( !empty($setting_hasAgenda) && $has_agenda )
-                            echo '<th>Agenda</th>';
+                        if( $show_agenda )
+                            echo '<th scope="col">Agenda</th>';
                         // If a column heading has no data for a specific year, do not display the column.
-                        if( !empty($setting_hasMinutes) && $has_minutes )
-                            echo '<th>Minutes</th>';
+                        if( $show_minutes )
+                            echo '<th scope="col">Minutes</th>';
                         ?>
                     </tr>
                     </thead>
@@ -177,10 +181,10 @@ get_header(); ?>
                                 edit_post_link('Edit Meeting', '', '', $meeting['id'] );
                                 echo '</td>';
 
-                                if( !empty($setting_hasSubmitDate) && $select_years == $setting_current_year )
+                                if( $show_submit_date )
                                     echo '<td>' . $meeting['deadline'] . '</td>';
 
-                                if( !empty($setting_hasAgenda)) {
+                                if( $show_agenda ) {
                                     echo '<td>';
 
                                     if( !empty( $meeting['agenda_id'] ) && $meeting['agenda_id'] != 0 )
@@ -189,7 +193,7 @@ get_header(); ?>
                                     echo '</td>';
                                 }
 
-                                if( !empty($setting_hasMinutes) ) {
+                                if( $show_minutes ) {
                                     echo '<td>';
 
                                     if( !empty( $meeting['minutes_id'] ) && $meeting['minutes_id'] != 0 )

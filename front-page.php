@@ -3,7 +3,7 @@ get_header();
 $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
 ?>
         <div id="primary" class="content-area">
-            <main id="main" class="site-main" role="main">
+            <main id="main" class="site-main" role="main" tabindex="-1">
 
             	<div class="content-tile">
                     <h1 class="entry-title">About the Graduate Council</h1>

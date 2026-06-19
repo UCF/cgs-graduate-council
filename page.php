@@ -14,7 +14,7 @@
 get_header(); ?>
 
 <div id="primary" class="content-area">
-	<main id="main" class="site-main" role="main">
+	<main id="main" class="site-main" role="main" tabindex="-1">
         <div class="content-tile">
             <?php
             // Start the loop.

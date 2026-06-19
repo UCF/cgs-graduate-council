@@ -6,6 +6,32 @@
  * @subpackage Twenty_Fourteen
  * @since Twenty Fourteen 1.0
  */
+function cgs_gc_homepage_document_title() {
+    return 'Graduate Council - University of Central Florida';
+}
+
+function cgs_gc_homepage_document_title_parts( $title ) {
+    if ( ! is_front_page() ) {
+        return $title;
+    }
+
+    $title['title'] = 'Graduate Council';
+    $title['site']  = 'University of Central Florida';
+    unset( $title['tagline'] );
+
+    return $title;
+}
+add_filter( 'document_title_parts', 'cgs_gc_homepage_document_title_parts' );
+
+function cgs_gc_homepage_wpseo_title( $title ) {
+    if ( is_front_page() ) {
+        return cgs_gc_homepage_document_title();
+    }
+
+    return $title;
+}
+add_filter( 'wpseo_title', 'cgs_gc_homepage_wpseo_title' );
+
 get_header();
 
 $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
@@ -21,7 +47,7 @@ static $policy_status = array(
 
 ?>
 <div id="primary" class="content-area">
-    <main id="main" class="site-main" role="main">
+    <main id="main" class="site-main" role="main" tabindex="-1">
         <?php
         $title = '';
         function roleDetails( $role ) {
@@ -132,9 +158,9 @@ static $policy_status = array(
             ?>
             <div class="content-tile">
             <h1 class="entry-title"><?php the_title(); ?></h1>
-            <p>
+            <div class="entry-content">
                 <?php the_content(); ?>
-            </p>
+            </div>
             </div>
             <?php
         endwhile;

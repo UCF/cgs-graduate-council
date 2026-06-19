@@ -8,7 +8,7 @@
  */
 get_header(); ?>
 <div id="primary" class="content-area">
-    <main id="main" class="site-main" role="main">
+    <main id="main" class="site-main" role="main" tabindex="-1">
         <?php
         $title = '';
         $setting_current_year = trim( esc_attr( get_option( 'current_year' ) ) );
@@ -109,7 +109,7 @@ get_header(); ?>
                 ?>
                 </script>
                 <div class="col-xs-3">
-                    <h3><span>Year</span></h3>
+                    <h2 class="archive-filter-heading"><span>Year</span></h2>
                     <div id="years"></div>
                 </div>
                 <div class="col-xs-9">
