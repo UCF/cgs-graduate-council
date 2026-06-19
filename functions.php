@@ -133,6 +133,7 @@ function twentysixteen_setup() {
     //include_once('post_types/agenda.php');
     include_once('post_types/member.php');
     include_once('post_types/file-post.php');
+		include_once('post_types/migration_settings.php');
 endif; // twentysixteen_setup
 add_action( 'after_setup_theme', 'twentysixteen_setup' );
 

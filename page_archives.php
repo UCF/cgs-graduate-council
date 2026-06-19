@@ -52,8 +52,6 @@ get_header(); ?>
             $option_key = 'current_year_' . $all_tax_terms['committee']['term_ids'][$index];
             $setting_committee_current_year[$committee] = trim( esc_attr( get_option( $option_key ) ) );
         }
-        var_dump($setting_committee_current_year);
-        var_dump($all_tax_terms['committee-year']);
 
         // Render function for taxonomy filters
         function render_tax_filter_checkboxes($term, $term_array, $current_terms) {
@@ -359,9 +357,9 @@ get_header(); ?>
                     for( var i = files.length; i --> 0; ) {
                         var file = files[ i ];
 
-						var filter_type = displayFileType[ file['document-type'] ];
+						var filter_type = file['tax-document-type'][0] || displayFileType[ file['document-type'] ];
                         var document_year = (!Array.isArray(file['tax-committee-year']) || 0 == file['tax-committee-year'].length) ? file.year : file['tax-committee-year'].join(", ");
-                        if ( file['policy-status'] && 'Policies' == filter_type ) filter_type = file['policy-status'] + ' Policy';
+                        if ( file['policy-status'] && 'Policies' == filter_type ) filter_type = (file['policy-status'] + ' Policy').trim();
 						var program_type = (!Array.isArray(file['tax-committee']) || 0 == file['tax-committee'].length) ? programCodeToProgram[ file.committee ] : file['tax-committee'].join(", ");
 
                         r += "<tr>";

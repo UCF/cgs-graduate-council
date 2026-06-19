@@ -130,6 +130,10 @@ namespace file_post_type{
                 update_post_meta( $id, 'date', $date );
             }
         }
+        function plugin_get_document_type_tax_terms($post) {
+            $taxonomy = 'document-type';
+            return wp_get_post_terms($post->ID, $taxonomy, ['fields' => 'slugs']);
+        }
         function plugin_display_details_meta_box($post) {
             $policy_status = array(
                 'public_comment' => 'Public Comment',
@@ -137,6 +141,8 @@ namespace file_post_type{
                 'approved' => 'Approved',
                 'rejected' => 'Not Approved'
             );
+            $document_type_terms = plugin_get_document_type_tax_terms($post);
+            $contains_policies_tax = in_array('policies', $document_type_terms);
             
             $data = file_data( $post->ID );
             $setting_years = trim( esc_attr( get_option( 'years' ) ) );
@@ -229,8 +235,8 @@ namespace file_post_type{
                     <tr>
                         <th><label id="date-label" for="date">
                             <div class="date-label-container">
-                                <div class="<?php if( $data['document-type'] != 'policies' ) echo "date-label-in"; else echo "date-label-out"; ?> date-label">Date:</div>
-                                <div class="<?php if( 'policies' == $data['document-type'] ) echo "date-label-in"; else echo "date-label-out"; ?> effective-date-label">Effective Date:</div>
+                                <div class="<?php if( $data['document-type'] != 'policies' && !$contains_policies_tax ) echo "date-label-in"; else echo "date-label-out"; ?> date-label">Date:</div>
+                                <div class="<?php if( 'policies' == $data['document-type'] || $contains_policies_tax ) echo "date-label-in"; else echo "date-label-out"; ?> effective-date-label">Effective Date:</div>
                             </div>
                         </label></th>
                         <td>
@@ -249,7 +255,7 @@ namespace file_post_type{
                         </td>
                     </tr>
                 </table>
-                <table id="policy-attributes" class="<?php if( 'policies' == $data['document-type'] ) echo "policy-attributes-visible"; else echo "policy-attributes-hidden"; ?>" <?php if( 'policies' != $data['document-type'] ) echo " style=\"position: absolute;\""; ?>width="100%">
+                <table id="policy-attributes" class="<?php if( 'policies' == $data['document-type'] || $contains_policies_tax) echo "policy-attributes-visible"; else echo "policy-attributes-hidden"; ?>" <?php if( 'policies' != $data['document-type'] && !$contains_policies_tax ) echo " style=\"position: absolute;\""; ?>width="100%">
                     <tr>
                         <th><label for="policy-name">Policy:</label></th>
                         <td>
@@ -454,10 +460,38 @@ function plugin_scripts()
 
             echo '<div>';
 			foreach ($terms as $term) {
-				echo '<label><input type="radio" name="document_type_term" value="' . esc_attr($term->term_id) . '" ' . checked(in_array($term->term_id, $current_terms), true, false) . '> ' . esc_html($term->name) . '</label><br>';
+				echo '<label><input type="radio" name="document_type_term" data-slug="' . esc_attr($term->slug) . '"'
+                    . ' onchange="handleTaxDocumentTypeChange(this)"'
+                    . ' value="' . esc_attr($term->term_id) . '" ' . checked(in_array($term->term_id, $current_terms), true, false) . '> ' . esc_html($term->name) . '</label><br>';
 			}
             echo '<input type="text" name="new_document_type_term" placeholder="Add new document type" style="margin-top:10px;width:100%;" />';
             echo '</div>';
+
+            ?>
+            <script>
+                function handleTaxDocumentTypeChange(e) {
+                    $policy_table = document.getElementById('policy-attributes');
+                    $startOutElement = document.getElementsByClassName('date-label-out')[0];
+                    $startInElement = document.getElementsByClassName('date-label-in')[0];
+                    $isCurrentPoliciesType = $startInElement?.classList.contains('effective-date-label');
+                    if(('policies' == e?.dataset?.slug && !$isCurrentPoliciesType) || ('policies' != e?.dataset?.slug && $isCurrentPoliciesType)) {
+                        $startOutElement?.classList.toggle('date-label-out');
+                        $startOutElement?.classList.toggle('date-label-in');
+                        $startInElement?.classList.toggle('date-label-out');
+                        $startInElement?.classList.toggle('date-label-in');
+                        $policy_table?.classList.toggle("policy-attributes-hidden");
+                        $policy_table?.classList.toggle("policy-attributes-visible");
+                        if ($isCurrentPoliciesType) {
+                            document.getElementById('policy-attributes').ontransitionend = () => {
+                                document.getElementById('policy-attributes').style["position"] = "absolute";
+                            };
+                        } else {
+                            document.getElementById('policy-attributes').style["position"] = "unset";
+                            document.getElementById('policy-attributes').ontransitionend = () => {};
+                        }
+                    }
+                }
+            </script><?php
 		}
 
 		function save_document_type_radio_selection($post_id) {

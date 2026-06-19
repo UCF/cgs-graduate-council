@@ -519,6 +519,17 @@ namespace meetings_type{
             }
         }
 
+        function get_taxonomy_terms( $taxonomy ) {
+            $tax_args = array(
+                'taxonomy'   => $taxonomy,
+                'hide_empty' => false,
+                'orderby'    => 'name',
+            );
+            if ('committee-year' == $taxonomy_slug) $tax_args['order'] = 'DESC';
+            return get_terms( $tax_args );
+
+        }
+
         function council_page_template_metabox( $post ) {
             // Define the meta box form fields here
             $meta = get_post_meta( $post->ID );
@@ -541,6 +552,46 @@ namespace meetings_type{
             // Define the meta box form fields here
             $meta = get_post_meta( $post->ID );
             $committee    = valueFromMeta( $meta, 'committee' );
+            ?>
+            <div>
+                <label for="committee">Committee:</label>
+                <select id="committee" name="committee">
+                    <option value="" <?php if( $committee == '' ) { echo 'selected'; } ?>></option>
+                    <option value="appeals_serving_years" <?php if( $committee == 'appeals_serving_years' ) { echo 'selected'; } ?>>Appeals</option>
+                    <option value="curriculum_serving_years" <?php if( $committee == 'curriculum_serving_years' ) { echo 'selected'; } ?>>Curriculum</option>
+                    <option value="policy_serving_years" <?php if( $committee == 'policy_serving_years' ) { echo 'selected'; } ?>>Policy</option>
+                    <option value="program_serving_years" <?php if( $committee == 'program_serving_years' ) { echo 'selected'; } ?>>Program Review and Awards</option>
+                </select>
+            </div>
+            <h3 class="setting-heading">Meeting Settings:</h3>
+            <div>
+                <input id="hasSubmitDate" name="hasSubmitDate" type="checkbox" <?php if( $meta['hasSubmitDate'][0] ) { echo "checked";} ?>>
+                <label for="hasSubmitDate">Has Submit Date</label>
+            </div>
+            <div>
+                <input id="hasAgenda" name="hasAgenda" type="checkbox" <?php if( $meta['hasAgenda'][0] ) { echo "checked";} ?>>
+                <label for="hasAgenda">Has Agenda</label>
+            </div>
+            <div>
+                <input id="hasMinutes" name="hasMinutes" type="checkbox" <?php if( $meta['hasMinutes'][0] ) { echo "checked";} ?>>
+                <label for="hasMinutes">Has Minutes</label>
+            </div>
+        <?php
+        }
+        function meetings_archive_page_template_tax_metabox( $post ) {
+            // Define the meta box form fields here
+            $meta = get_post_meta( $post->ID );
+            $taxonomy = 'committee';
+            $committee    = valueFromMeta( $meta, $taxonomy );
+            $tax_args = array(
+                'taxonomy'   => $taxonomy,
+                'hide_empty' => false,
+                'orderby'    => 'name',
+            );
+            $committee_tax_terms = get_terms( $tax_args );
+            $archive_page_committee_tax = wp_get_post_terms($post->ID, $taxonomy);
+            ['slug' => $committee_tax_slug, 'name' => $committee_tax_name] = $archive_page_committee_tax[0];
+            var_dump($committee_tax_slug . ' : ' . $committee_tax_name);
             ?>
             <div>
                 <label for="committee">Committee:</label>
